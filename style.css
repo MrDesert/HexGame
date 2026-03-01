@@ -1,226 +1,15 @@
- @media (orientation: landscape){
-   .bonusContainer{
-      display: inline-block;
-   }
-   .bonusMenu{
-      top: 30%;
-   } 
-   .bossLevelBonusIMG{
-      height: 80px;
-    }
-   #upgrades{
-      font-size: clamp(24px, 5vw, 32px); 
-   }
-   #leftTopMenu{   
-      top: 5px
-   };
-   .rightText{
-      position: absolute !important;
-      top: 100px !important;
-      transform: translateY(-100%);
-   }
-   #skillpanel {
-      top: clamp(300px, 50%, 1000px) !important;
-   }
- }
- @media (orientation: portrait){
-   #menuForCoins{
-      top: clamp(270px, 50%, 1000px);
-      transform: translateY(-50%)
-   }
-   #stat{
-      top: 110px !important;
-   }
-   .bonusContainer{
-      display: inline-block;
-   }
-   .bonusMenu{
-      top: 30%;
-   } 
-   .bossLevelBonusIMG{
-      height: 80px;
-    }
-   #upgrades{
-      font-size: clamp(24px, 5vw, 32px); 
-   }
-    .bonusMenu{
-      top: 10%;
-      max-width: 25%;
-   }
-    .bossLevelBonusIMG{
-      height: 70px;
-    }
-   #upgrades{
-      font-size: clamp(20px, 5vw, 21px); 
-   }
-   #leftTopMenu{
-      top: 5px;
-      width: 65px;  
-      flex-wrap: wrap;
-   }
-        #skillpanel {
-    /* Перемещаем вниз */
-    top: auto !important; /* Сбрасываем top */
-    bottom: 0px !important; /* Отступ от нижнего края */
-    right: 50% !important; /* Центрируем по горизонтали */
-    transform: translateX(50%) !important; /* Центрируем точно */
-    
-    /* Меняем форму на горизонтальную */
-    width: clamp(100px, 80%, 350px) !important; /* Ширина по содержимому */
-    height: 80px !important; /* Фиксированная высота */
-    
-    /* Меняем направление flex */
-    flex-direction: row !important;
-    flex-wrap: nowrap !important; /* Все в одну строку */
-    
-    /* Изменяем отступы */
-    padding: 10px 14px !important;
-    column-gap: 5px !important; /* Отступы между элементами */
-    row-gap: 0 !important;
-    
-    /* Изменяем скругление углов */
-    border-radius: 20px 20px 0px 0px !important; /* Все углы скруглены */
-    
-    /* Для очень маленьких экранов */
-    max-width: 95vw !important; /* Не шире 95% экрана */
-    overflow-x: auto !important; /* Скролл если не помещается */
-  }
+@media (orientation: landscape){
 }
- @media (max-width: 670px) and (orientation: landscape) or (max-height: 430px){
-    .bossLevelBonusIMG{
-      height: 60px;
-    }
-      .bonusMenu{
-      top: 10%;
-      max-width: 25%;
-   }
-   #dailyGiftMenu{
-      max-width: none !important;
-      width: clamp(110px, 60%, 500px);
-   } 
-   #upgrades{
-      font-size: clamp(20px, 5vw, 21px); 
-   } 
-        #skillpanel {
-    /* Перемещаем вниз */
-    top: auto !important; /* Сбрасываем top */
-    bottom: 0px !important; /* Отступ от нижнего края */
-    right: 0% !important; /* Центрируем по горизонтали */
-    transform: translateX(0%) !important; /* Центрируем точно */
-    
-    /* Меняем форму на горизонтальную */
-    width: clamp(275px, 80%, 350px) !important; /* Ширина по содержимому */
-    height: 80px !important; /* Фиксированная высота */
-    
-    /* Меняем направление flex */
-    flex-direction: row !important;
-    flex-wrap: nowrap !important; /* Все в одну строку */
-    
-    /* Изменяем отступы */
-    padding: 10px 14px !important;
-    column-gap: 5px !important; /* Отступы между элементами */
-    row-gap: 0 !important;
-    
-    /* Изменяем скругление углов */
-    border-radius: 20px 20px 0px 0px !important; /* Все углы скруглены */
-    
-    /* Для очень маленьких экранов */
-    max-width: 95vw !important; /* Не шире 95% экрана */
-    overflow-x: auto !important; /* Скролл если не помещается */
-  }
- }
- @media (max-height: 430px){
-        #skillpanel {
-    /* Перемещаем вниз */
-    top: auto !important; /* Сбрасываем top */
-    bottom: 0px !important; /* Отступ от нижнего края */
-    right: 0% !important; /* Центрируем по горизонтали */
-    transform: translateX(0%) !important; /* Центрируем точно */
-    
-    /* Меняем форму на горизонтальную */
-    width: clamp(275px, 35%, 670px) !important; /* Ширина по содержимому */
-    height: 80px !important; /* Фиксированная высота */
-    
-    /* Меняем направление flex */
-    flex-direction: row !important;
-    flex-wrap: nowrap !important; /* Все в одну строку */
-    
-    /* Изменяем отступы */
-    padding: 10px 14px !important;
-    column-gap: 5px !important; /* Отступы между элементами */
-    row-gap: 0 !important;
-    
-    /* Изменяем скругление углов */
-    border-radius: 20px 20px 0px 0px !important; /* Все углы скруглены */
-    
-    /* Для очень маленьких экранов */
-    max-width: 95vw !important; /* Не шире 95% экрана */
-    overflow-x: auto !important; /* Скролл если не помещается */
-  }
- }
+@media (orientation: portrait){ 
+}
+@media (max-width: 670px) and (orientation: landscape) or (max-height: 430px){
+}
+@media (max-height: 430px){
+}
 
- *{
+*{
     font-family: 'Courier New', Courier, monospace;    
 }
-#stat{
-   display: flex;
-   gap: 0px; 
-   position: absolute;
-   top: 60px;
-   right: 10px;
-   font-weight: 700;
-   font-size: clamp(18px, 2vw, 22px);
-}
-#dailyGiftMenu{
-   max-width: none !important;
-   width: clamp(260px, 80%, 500px);
-}
- #prifitLayerID{
-   display: flex;
-   gap: 6px;  
-   position: absolute;
-   font-size: clamp(14px, 2vw, 18px);
-   text-align: center;
-   justify-content: center; /*Выравнивание по горизантали*/
-   align-items: center; /*Выравнивание по вертикале*/
- }
- #hpTitleID, #prifitLayerID, .bonusMenu{
-    width: 100%;
-    text-align: center;
- }
- #prestige_info{
-   min-width: 95px;
-   width: 92%;
- }
- #rebootExpID{
-   min-width: 35px;
-   width: 8%;
- }
- .bonusMenu{
-   position: absolute;
-   background: rgba(41, 41, 41, 0.8);
-    border: 3px outset rgb(150, 150, 150);
-    border-radius: 25px;
-    width: auto;
-   left: 50%;
-   top: 50%;
-   transform: translate(-50%, -50%);
-   /* transform: translateX(-50%); */
-   /* transform: translateY(-50%); */
-    /* height: 90px; */
-    min-width: 130px;
-   z-index: 3;
-   padding: 15px;
-   color: white;
- }
- #pupmsTitle{
-    font-size: 25pt;
- }
- .pumpBtn{
-   height: 80px;
-   width: 15%;
-   min-width: 90px;
- }
  h1, h2{
     width: 100%;
     text-align: center;
@@ -231,9 +20,6 @@
     vertical-align: middle;
 
  }
- #upgrades{
-   font-weight: bold;
- }
  footer{
     position: fixed;
     bottom: 0px;
@@ -241,71 +27,12 @@
     text-align: center;
     color: white;
  }
- #hpBar{
-    background-color: brown;
-    width: 100%;
-    height: 20px;
- }
- #hpBarBorderID {
-    background-color: rgb(253, 117, 117);
-    width: 30%;
-    min-width: 165px;
-    height: 20px;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: clamp(75px, 13%, 80px);
-    border: solid 2px;
- }
- .level {
-    font-size: 16pt;
-    font-weight:bold;
- }
- #exp{
-    color: white;
- }
- .levelForExp{
-    background-color: rgba(0, 0, 0, 0) !important;
- }
- #layer{
-   position: absolute;
-   top: 60%;
-   width: 100%; 
-   height: 40%;
-   left: 0%;
- }
 #hitZoneID:hover {
     cursor: url('img/pickaxe_transparent_128x128.png') 64 64, pointer;
  }
  #hitZoneID:active {
     cursor: url('img/pickaxe_transparent_128x128-45.png') 64 64, pointer;
  }
-#layerImgID, #layerGold, #layerAll{
-   /* box-shadow: 1px 0px 35px 35px rgba(0, 0, 0, 0.3); */
-   top: 0px;
-   /* background: url("img/layer.png"); */
-   position: absolute;
-   margin-left: auto;
-   margin-right: auto;
-   height: 100%;
-   width: 100%;
-   min-width: 60%;
-   visibility: visible;
-   object-fit: cover;
-   object-position: top;
-}
-#cracks{
-   top: 0px;
-   margin-left: auto;
-   margin-right: auto;
-   position: relative;
-   height: 0%;
-   width: 100%;
-   min-width: 60%;
-   visibility: visible;
-   object-fit: cover;
-   object-position: top; 
-}
 html {
    height: 100%;
    width: 100%;
@@ -316,7 +43,6 @@ body {
    min-height: 300px;
    height: 100%;
    width: 100%;
-   background-image: url(img/background.png);
    background-position: 0% 0%;
    background-size: 1200px;
    height: 100%;
@@ -326,65 +52,6 @@ body {
    /* backdrop-filter: hue-rotate(10deg); */
    backdrop-filter: blur(1px);
    margin: 0%;
-}
-#infoExpID{
-   position: relative;
-   display: flex;
-   height: auto;
-   margin: 10px;
-   width: 100% - 20px;
-}
-#menuStatClose{
-   right: 5px;
-   top: 5px;
-}
-#langBtn {
-   position: absolute;
-   right: 10px;
-   top: 15px;
-   width: 40px;
-}
-#statBtn{
-   position: absolute;
-   right: 50px;
-   top: 15px;
-   width: 35px;
-}
-#rebootExpBtnID {
-   position: absolute;
-   width: 10%;
-   height: 40%;
-   bottom: 5%;
-   margin: 0px;
-}
-#rebootExpDesID {
-   width: 100%;
-   margin: 0px;
-}
-
-.imgAutoHit{
-   position: absolute;
-   height: 65px;
-   top: -10%;
-   opacity: 100%;
-   pointer-events:  none; /*отключаем реакцию мыши на неё*/
-   transition: top 3s ease-in, transform 3s ease-in, opacity 3s ease-in;
-}
-.imgTailMeteor{
-   position: absolute;
-   height: 160px;
-   top: calc(-10% - 110px);
-   opacity: 100%;
-   pointer-events:  none; /*отключаем реакцию мыши на неё*/
-   transform: matrix(-1, 0, 0, 1, 0, 0);
-   transition: top 1.5s ease-in, opacity 50ms ease-in;
-   animation: fire 1s infinite alternate, shake 0.1s infinite alternate;
-}
-.imgTailMeteor0{
-   animation: fire 1s infinite alternate, shake 0.1s infinite alternate;
-}
-.imgTailMeteor1{
-   animation: fire 1s infinite alternate, shake2 0.1s infinite alternate;
 }
 
 @keyframes fire {
@@ -417,79 +84,6 @@ body {
    75% {transform: translateX(1px) scaleY(1.05) scaleX(-1);}
 }
 
-#menuForCoins{
-   z-index: 2;
-}
-.bossLevelBonusValue{
-   position: absolute;
-   bottom: 0px;
-   right: 0px;
-   color: green;
-   font-weight: bold;
-   font-size: clamp(28px, 100%, 32px);
-   text-shadow: 
-   1px 0 0 black,
-   0 1px 0 black,
-   1px 1px 0 black;
-max-width: 100%;
-   white-space: nowrap;
-   overflow: hidden;
-}
-#bookID{
-   object-fit: fill;
-   width: 100%;
-   height: 100%;
-}
-#leftTopMenu{
-   z-index: 1;
-   position: absolute;
-   left: 5px;
-   display: flex;
-   column-gap: 5px;
-}
-#menu, #geodeConteiner{
-   height: 65px; 
-   width: 65px;
-   position: relative;
-}
-#geodeCraks{
-   top: 0px;
-   left: 0px;
-   margin-left: auto;
-   margin-right: auto;
-   position: absolute;
-   height: 0%;
-   width: 100%;
-   min-width: 60%;
-   visibility: visible;
-   object-fit: cover;
-   object-position: top; 
-}
-#geodeBonusIMGID{
-   position: absolute;
-   width:  45px;
-   height: 45px;
-   transition: transform 1.2s ease-in, opacity 1.2s ease-in;
-   z-index: 4;
-   object-fit: contain;
-}
-#geodeIMG, #geodeRift{
-   height: 100%;
-   object-fit: cover;
-}
-#geodeRerolBtn{
-   position: absolute;
-   bottom: -5px;
-   right: -6px;
-   height: 40px; 
-   width: 53px;
-   background-color: rgba(0, 0, 0, 0);
-   border: none;
-}
-.geode-glow {
-  animation: rainbow-glow 2s infinite alternate;
-}
-
 @keyframes rainbow-glow {
   0% {
     filter: drop-shadow(0 0 1px #ff006a)
@@ -511,9 +105,6 @@ max-width: 100%;
             drop-shadow(0 0 2px #c300ff)
             drop-shadow(0 0 3px #8c00ff);
   }
-}
-#geodeRift {
-   position: relative;
 }
 .claet::before {
   content: '';
@@ -541,15 +132,6 @@ max-width: 100%;
     0%, 100% {opacity: 0; transform: scale(0.5);}
     25% {opacity: 0; transform: scale(0.5);}
     50% {opacity: 1; transform: scale(20);}
-}
-
-#geodeValue{
-   position: absolute;
-   color:  white;
-   font-weight: 700;
-   font-size: 22px;
-   top: 43px;
-   left: 0px;
 }
 .GPU{
       /* Оптимизация для GPU */
@@ -589,59 +171,6 @@ max-width: 100%;
    50% {transform: translateX(-2px) scaleY(0.97) scaleX(0.97);}
    75% {transform: translateX(1px) scaleY(1.01)scaleX(1.01);}
 }
-
-.coinCl, .expCl{
-   height: 20px;
-   vertical-align: middle;
-}
-
-.bonusContainer{
-   position: relative;
-   max-width: 90px;
-   width: 10%;
-   min-width: 80px;
-   margin-left: 20px;
-   margin-right: 20px;
-     justify-content: center; /*Выравнивание по горизантали*/
-  align-items: center; /*Выравнивание по вертикале*/
-}
- .bossLevelBonusCls{
-    width: 100%;
-    max-width: 120px;
-    height: auto;
-    z-index: 1;
-    cursor: pointer;
-    color: white;
-    background-color: #606060;
-    border-radius: 3px;
- }
- #bossLevelBonusConteinerRerollID{
-   width: 100%;
- }
-
-  #bossLevelBonusAllBtnID{
-   width: 120px;
-   margin-left: 20px;
- }
- #bossLevelBonusRerolBtn{
-   height: 40px;
-   width: 53px;
-   margin-left: 20px;
-   border-radius: 10px;
- }
- #bossLevelBonusRerolBtnImgID, #geodeRerolBtnImgID{
-   width: 100%;
-   height: 100%;
-   object-fit: contain;
-}
-
- #bossLevelBonusTitleID{
-   font-size: 25px;
-   margin-top: 5px;
-   margin-bottom: 5px;
-   hyphens: auto;
- }
-
  #warning{
    position: absolute;
    top: 2px;
@@ -651,81 +180,6 @@ max-width: 100%;
    width: 15px;
    border-radius: 7px;
  }
-
- #skillpanel{
-   z-index: 2;
-   padding: 14px;
-   padding-right: 10px;
-   display: flex;
-   flex-wrap: wrap;
-   row-gap: 5px;
-	background: rgba(90, 90, 90, 0.8);
-	box-shadow: 0px 0px 15px 15px rgba(0, 0, 0, 0.2);
-   position: absolute;
-   top: 50%;
-   right: 0px;
-   transform: translateY(-50%);
-   /* height: 370px; */
-   width: 75px;
-   border-radius: 20px 0px 0px 20px; 
-   border: 3px outset rgb(150, 150, 150);
- }
- .skillContainer{
-   position: relative;
-   justify-content: center; /*Выравнивание по горизантали*/
-   align-items: center; /*Выравнивание по вертикале*/
-   border: 3px outset rgb(150, 150, 150);
-   background: rgba(140, 140, 140, 0.3);
-   height: 70px;
-   width: 100%;
-}
-.skillIMG{
-   position: absolute;
-   left: 50%;
-   top: 50%;
-   transform: translateX(-50%) translateY(-50%);
-   object-fit: contain;
-   width: 80%;
-}
-.skillValue{
-   position: absolute;
-   letter-spacing: -3px;
-   padding-right: 2px;
-   left: -1px;
-   bottom: -7px;
-   font-size: 22px;
-   font-weight: bold;
-   padding-right: 6px;
-   background: rgba(201, 201, 201, 0.4);
-   border-radius: 0px 10px 0px 0px;
-}
-.skillTime{
-   position: absolute;
-   padding-right: 3px;
-   z-index: 1;
-   font-weight: bold;
-   background: rgba(201, 201, 201, 0.4);
-   border-radius: 0px 0px 10px 0px;
-}
-#offlineBonusContainerID{
-   margin-left: none;
-   margin-right: none;
-   padding-left: 20px;
-   padding-right: 20px;
-}
-#inerectiveBonusContID2{
-   height: 50px;
-   position: absolute;
-   top: 1px;
-   z-index: 3;
-   opacity: 0%;
-   scale: 0;
-   transition:scale 1.2s ease-in, opacity 1.2s ease-in, transform 1.2s ease-in; 
-}
-#inerectiveBonusID{
-   object-fit: contain;
-   height: 100%;
-}
 .highlight {
     position: relative;
     animation: simple-blink 8s infinite;
@@ -753,55 +207,20 @@ max-width: 100%;
     80% { filter: brightness(1) contrast(1);}
     90% { filter: brightness(1.2) contrast(1.2);}
 }
-.dailyGiftContainer{
-   background-color: #797979;
-   max-width: none;
-   margin: 7px;
-   width: auto;
-   min-width: auto;
-   padding: 8px;
-   padding-top: 0px;
-   border-radius: 15px 15px 0px 0px ;
-}
-.dailyGiftDayCont{
-   display: flex;
-   column-gap: 8px;
-   width: auto;
-   min-width: 50px;
-   max-width: 100%;
-   justify-content: center; /*Выравнивание по горизантали*/
-   align-items: center; /*Выравнивание по вертикале*/
-}
-.dailySkill{
-   border: white 1px solid;
-   background-color: #919191;
-   border-radius: 5px;
-   position: relative;
-   width: 60px;
-   height: 60px;
-   flex-shrink: 0 !important; /* Не позволит ужиматься */
-}
 .grayScale{
    filter: grayscale(60%);
 }
-#hitZoneID{
-   position: fixed; 
-   height: 100%; 
-   width: 100%;
+#map {
+   display: grid;
 }
-#handDamage, #autoDamage{
-   margin-left: 6px;
+.hex {
+   width: 100px; /* Ширина от угла до угла */
+   height: 85px; /* Высота = ширина * √3/2 (примерно 0.866) */
+   clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+   margin-right: 0px; /* Гексы наезжают друг на друга */
+   margin: 2px; /* Чтобы не слипались */
+   transition: background-color 0.3s; /* Для плавной смены цвета */
 }
-#menuStat {
-   height: clamp(130px, 15%, 400px);
-}
-#infoStatID{
-   position: absolute;
-   top: 25px ;
-   display: flex;
-   flex-wrap: wrap;
-   justify-content: center;
-}
-.statInfo{
-   min-width: 170px;
+.grass{
+   background-color: green;
 }

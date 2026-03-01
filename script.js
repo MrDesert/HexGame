@@ -6,6 +6,9 @@ function startGame() {
         changeLang(document.documentElement.lang);
         document.getElementById("preloaderID").hidden = "hidden";
         loadLocalStorage();
+        const col = Math.ceil(window.innerWidth/ 100);
+        const row = Math.ceil((window.innerHeight-50)/ 100);
+        createHexGrid(row, col, 'map');
     }
 }
 
@@ -30,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
 }, {once: true});
 
 function loadLocalStorage(){
-    offlineProfit(Math.ceil((new Date() - new Date(localStorage.getItem("exitTime") || new Date()))/1000));
+    // offlineProfit(Math.ceil((new Date() - new Date(localStorage.getItem("exitTime") || new Date()))/1000));
 }
 
 window.addEventListener('beforeunload', () => {
@@ -67,3 +70,36 @@ window.addEventListener('focus', ()=>{
         ysdk.features?.GameplayAPI?.start?.();
     }
 })
+
+function createHexGrid(rows, cols, containerId) {
+    const container = ID.map;
+    container.style.position = 'relative';
+    container.style.width = window.innerWidth + 'px';
+    container.style.height = (rows * 100) + 'px';
+    
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+            const hex = document.createElement('div');
+            hex.className = 'hex grass';
+            hex.dataset.row = row;
+            hex.dataset.col = col;
+            
+            hex.style.position = 'absolute';
+            hex.style.left = (col * 80) + 'px'; // 70px чтобы наезжали по горизонтали
+            
+            // Расчет вертикальной позиции
+            let top = row * 90; // 75% высоты для вертикального нахлеста
+            
+            // Сдвигаем каждый второй столбец вниз
+            if (col % 2 === 1) {
+                top += 45;
+            }
+            
+            hex.style.top = top + 'px';
+            
+            container.appendChild(hex);
+        }
+    }
+}
+
+// Создаем поле 10x10

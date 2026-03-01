@@ -1,7 +1,12 @@
 {
-"h1": {
+"langBtn": {
     "Parent": "body",
-    "Tag": "h1",
-    "Text": "MinerGame"
+    "Tag": "button",
+    "Class": "btnCloseCircule",
+    "Value": "ru",
+    "OnClick": "changeLang(this.value)"
+},
+"map": {
+    "Parent": "body"
 }
 }
