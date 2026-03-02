@@ -3,6 +3,7 @@ let pausescreen = false;
 
 const hexs = [];
 const mapHexs = [];
+const enemyCells = [];
 let money = 0;
 let wood = 0;
 let food = 0;
@@ -117,19 +118,25 @@ function createHexGrid(rows, cols, containerId) {
             }
             container.appendChild(hex);
             mapHexs[Row].push(hexs.length);
-            hexs.push({row: Row, col: Col, land: "grass", tree: Tree, treeChild: false, void: true, house: false});
+            hexs.push({row: Row, col: Col, land: "grass", tree: Tree, treeChild: false, void: true, house: false, id: document.getElementById("hex"+Row+Col)});
         }
     }
-    playrsHex();
+    playerLand(playrsHex());
+    enemyLand(playrsHex());
 }
 function playrsHex(){
     const playrHex = Math.floor(Math.random()*hexs.length);
     const hex = hexs[playrHex];
-    playerLand(hex)
+    return hex;
 }
 function playerLand(hex){
     hex.land = "player";
-    document.getElementById("hex"+hex.row+hex.col)?.classList.add("playrsGrass");
+    hex.id?.classList.add("playrsGrass");
+}
+function enemyLand(hex){
+    hex.land = "enemy";
+    hex.id?.classList.add("enemyGrass");
+    enemyCells.push(hex);
 }
 function nextStep(){
     const newTree = [];
@@ -163,10 +170,25 @@ function nextStep(){
             energyPlus(2);
         }
     })
+    const cells = neighboringСells(enemyCells[Math.floor(Math.random()*enemyCells.length)]);
+    let cellEnemy;
+    let next = false; 
+    do {
+        cellEnemy = neighboringСells(enemyCells[Math.floor(Math.random()*enemyCells.length)]);
+        cellEnemy.forEach(cell =>{
+            if(cell.land != "enemy"){
+                next = true;
+            };
+        })
+    } while (!next);
+    let stepEnemy;
+    do {stepEnemy = cellEnemy[Math.floor(Math.random()*cellEnemy.length)];
+    } while (stepEnemy.land == "enemy");
+    myLog(stepEnemy.row +":"+ stepEnemy.col)
+    enemyLand(stepEnemy);
     newTree.forEach(hex =>{
-        //  myLog("hexTree"+ hex)
-        hexs[hex].treeChild = true;
-        hexs[hex].void = false;
+        hex.treeChild = true;
+        hex.void = false;
     })
 }
 function energyPlus(value){
@@ -188,22 +210,22 @@ function treeGrowth(hex, chance){
     }
 }
 function newTreeChild(hex, chance){
-    //    myLog("hex"+(hex.row+1)+hex.col)
-        rowPlusMinus = hex.col % 2 ? 1 : -1;
-        const patterns = ["hex"+(hex.row+1)+hex.col, "hex"+(hex.row-1)+hex.col, "hex"+hex.row+(hex.col+1), "hex"+hex.row+(hex.col-1), "hex"+(hex.row+rowPlusMinus)+(hex.col+1), "hex"+(hex.row+rowPlusMinus)+(hex.col-1)];
-        const patterns2 = [mapHexs[hex.row+1]?.[hex.col], mapHexs[hex.row-1]?.[hex.col], mapHexs[hex.row]?.[hex.col+1], mapHexs[hex.row]?.[hex.col-1], mapHexs[hex.row+rowPlusMinus]?.[hex.col+1], mapHexs[hex.row+rowPlusMinus]?.[hex.col-1]]
-        // myLog("patterns2 - "+patterns2.length)
-        for(let i = 0; i < 6; i++){
+        const cells = neighboringСells(hex);
+        cells.forEach(cell => {
             if(Math.round(Math.random()*chance)<1){
-                const hexDom = document.getElementById(patterns[i]);
-                if(hexDom && hexs[patterns2[i]].void){
-                    hexDom?.classList.add("treeChild");
-                    return patterns2[i];
+                if(cell.id && cell.void){
+                    cell.id?.classList.add("treeChild");
+                    return hex;
                 }
             }
-        } 
+        })
 }
 
+function neighboringСells(hex){
+    rowPlusMinus = hex.col % 2 ? 1 : -1;
+    const cells = [hexs[mapHexs[hex.row+1]?.[hex.col]], hexs[mapHexs[hex.row-1]?.[hex.col]], hexs[mapHexs[hex.row]?.[hex.col+1]], hexs[mapHexs[hex.row]?.[hex.col-1]], hexs[mapHexs[hex.row+rowPlusMinus]?.[hex.col+1]], hexs[mapHexs[hex.row+rowPlusMinus]?.[hex.col-1]]]
+    return cells;
+}
 function hexAction(row, col){
 const hex = hexs[mapHexs[row][col]]
 const hexDom = document.getElementById("hex"+row+col);
@@ -238,8 +260,14 @@ if(hex.land == "player"){
         }
     }  
 } else if (hex.land == "grass" && energy > 1){
-    energyChange(-2)
-    playerLand(hex)
+    const cells = neighboringСells(hex);
+    for (const cell of cells) {
+        if (cell.land == "player") {
+            energyChange(-2);
+            playerLand(hex);
+            break;
+        }
+    }
 }
 }
 

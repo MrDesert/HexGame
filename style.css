@@ -231,6 +231,9 @@ body {
 .playrsGrass{
    background-color: green;
 }
+.enemyGrass{
+   background-color: darkolivegreen;
+}
 .treeChild{
    background-image: url("img/firLitle.png");
    background-size: 70%;
