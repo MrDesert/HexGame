@@ -7,8 +7,8 @@ const enemyCells = [];
 let money = 0;
 let wood = 0;
 let food = 0;
-let energy = 2;
-let energyMax = 2;
+let energy = 4;
+let energyMax = 4;
 
 function startGame() {
     if(sdkLoad && resurses && HTMLLoaded){
@@ -263,6 +263,15 @@ if(hex.land == "player"){
     for (const cell of cells) {
         if (cell.land == "player") {
             energyChange(-2);
+            playerLand(hex);
+            break;
+        }
+    }
+} else if (hex.land == "enemy" && energy > 3){
+    const cells = neighboringСells(hex);
+    for (const cell of cells) {
+        if (cell.land == "player") {
+            energyChange(-4);
             playerLand(hex);
             break;
         }
