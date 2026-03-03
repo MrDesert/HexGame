@@ -141,6 +141,7 @@ function enemyLand(hex){
 function nextStep(){
     const newTree = [];
     hexs.forEach(hex => {
+            console.log(money)
         if(hex.tree){
             const child = newTreeChild(hex, 25);
             if(child){
@@ -170,21 +171,19 @@ function nextStep(){
             energyPlus(2);
         }
     })
-    const cells = neighboringСells(enemyCells[Math.floor(Math.random()*enemyCells.length)]);
-    let cellEnemy;
+    let cells;
     let next = false; 
     do {
-        cellEnemy = neighboringСells(enemyCells[Math.floor(Math.random()*enemyCells.length)]);
-        cellEnemy.forEach(cell =>{
-            if(cell.land != "enemy"){
+        cells = neighboringСells(enemyCells[Math.floor(Math.random()*enemyCells.length)]);
+        cells.forEach(cell =>{
+            if(cell && (cell.land == "player" || cell.land == "grass")){
                 next = true;
             };
         })
     } while (!next);
     let stepEnemy;
-    do {stepEnemy = cellEnemy[Math.floor(Math.random()*cellEnemy.length)];
-    } while (stepEnemy.land == "enemy");
-    myLog(stepEnemy.row +":"+ stepEnemy.col)
+    do {stepEnemy = cells[Math.floor(Math.random()*cells.length)];
+    } while (stepEnemy && stepEnemy.land == "enemy" || !stepEnemy);
     enemyLand(stepEnemy);
     newTree.forEach(hex =>{
         hex.treeChild = true;
@@ -213,7 +212,7 @@ function newTreeChild(hex, chance){
         const cells = neighboringСells(hex);
         cells.forEach(cell => {
             if(Math.round(Math.random()*chance)<1){
-                if(cell.id && cell.void){
+                if(cell && cell.id && cell.void){
                     cell.id?.classList.add("treeChild");
                     return hex;
                 }
@@ -268,6 +267,9 @@ if(hex.land == "player"){
             break;
         }
     }
+}
+if(energy <= 0){
+    nextStep();
 }
 }
 
