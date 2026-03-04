@@ -130,6 +130,9 @@ function playrsHex(){
     return hex;
 }
 function playerLand(hex){
+    if(hex.land == "enemy"){
+        hex.id?.classList.remove("enemyGrass");
+    }
     hex.land = "player";
     hex.id?.classList.add("playrsGrass");
 }
@@ -258,15 +261,6 @@ if(hex.land == "player"){
             treeGrowth(hex, 3);
         }
     }  
-} else if (hex.land == "grass" && energy > 1){
-    const cells = neighboringСells(hex);
-    for (const cell of cells) {
-        if (cell.land == "player") {
-            energyChange(-2);
-            playerLand(hex);
-            break;
-        }
-    }
 } else if (hex.land == "enemy" && energy > 3){
     const cells = neighboringСells(hex);
     for (const cell of cells) {
@@ -276,7 +270,16 @@ if(hex.land == "player"){
             break;
         }
     }
-}
+} else if (hex.land == "grass" && energy > 1){
+    const cells = neighboringСells(hex);
+    for (const cell of cells) {
+        if (cell.land == "player") {
+            energyChange(-2);
+            playerLand(hex);
+            break;
+        }
+    }
+} 
 if(energy <= 0){
     nextStep();
 }
