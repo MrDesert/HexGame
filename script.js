@@ -3,8 +3,7 @@ let pausescreen = false;
 
 const hexs = [];
 const mapHexs = [];
-const enemyCells = [];
-const flagHexs = [];
+let enemyCells = [];
 let money = 0;
 let wood = 0;
 let food = 0;
@@ -131,16 +130,13 @@ function playrsHex(){
     return hex;
 }
 function playerLand(hex){
-    if(hex.land == "enemy"){
-        hex.id?.classList.remove("enemyGrass");
-    }
+    hex.id?.classList.remove("enemyGrass");
     hex.land = "player";
     hex.id?.classList.add("playrsGrass");
 }
 function enemyLand(hex){
     hex.land = "enemy";
     hex.id?.classList.add("enemyGrass");
-    enemyCells.push(hex);
 }
 function nextStep(){
     energyPlus(2);
@@ -158,6 +154,9 @@ function nextStep(){
         if(hex.land == "player" && hex.void){
             finance(1);
         }
+        if(hex.land == "enemy"){
+            enemyCells.push(hex)
+        }
         if(hex.house){
             finance(5);
             if(food > 2){
@@ -166,6 +165,13 @@ function nextStep(){
                 finance(-6);
             }
             energyPlus(2);
+        }
+        if(hex.flag == "new"){
+            hex.flag = "old";
+            hex.id.classList.add("flagOld");
+        } else if (hex.flag == "old"){
+            hex.id.classList.remove("flagOld", "flag", "flag_Tree", "flag_TreeChild");
+            hex.flag = "none";
         }
     })
     let cells;
@@ -181,7 +187,8 @@ function nextStep(){
     let stepEnemy;
     do {stepEnemy = cells[Math.floor(Math.random()*cells.length)];
     } while (stepEnemy && stepEnemy.land == "enemy" || !stepEnemy);
-    enemyLand(stepEnemy)
+    enemyLand(stepEnemy);
+    enemyCells = [];
     raisingFlaf(stepEnemy, 0, "enemy");
 }
 function energyPlus(value){
@@ -197,7 +204,7 @@ function energyPlus(value){
 function treeGrowth(hex, chance){
     if(Math.round(Math.random()*chance)<1){
         document.getElementById("hex"+hex.row+hex.col)?.classList.add("tree");
-        document.getElementById("hex"+hex.row+hex.col)?.classList.remove("treeChild");
+        document.getElementById("hex"+hex.row+hex.col)?.classList.remove("treeChild", "flag_TreeChild", "flagOld");
         hex.tree = true;
         hex.treeChild = false;
     }
@@ -225,7 +232,7 @@ const hex = hexs[mapHexs[row][col]]
 const hexDom = document.getElementById("hex"+row+col);
 if(hex.land == "player"){
     if(hex.tree && energy > 0){
-        hexDom?.classList.remove("tree");
+        hexDom?.classList.remove("tree", "flag_Tree", "flagOld");
         hex.tree = false;
         hex.void = true;
         woodChange(5);
@@ -256,39 +263,31 @@ if(hex.land == "player"){
 } else if (hex.land == "enemy" && energy > 3){
     raisingFlaf(hex, -4, "player")
 } else if (hex.land == "grass" && energy > 1){
-    raisingFlaf(hex, -2, "player")
+    raisingFlaf(hex, -2, "player");
 } 
 if(energy <= 0){
-    const flagDel = [];
-    flagHexs.forEach((hex, index) => {
-     myLog(hex.id.classList)   
-    if(hex.flag === "new") {
-        hex.flag = "old";  
-    } else if(hex.flag == "old") {
-        hex.id.classList.remove("flag", "flag_Tree", "flag_TreeChild");
-        flagDel.push(index)
-    }
-    });
-    flagDel.forEach(index => {
-        flagHexs.splice(index, 1);
-    })
     nextStep();
 }
 }
 function raisingFlaf(hex, energy, who){
     const cells = neighboringСells(hex);
     for (const cell of cells) {
-        console.log(cell.land +" - "+ who)
-        if (cell.land == who) {
+        if (cell?.land == who) {
             energyChange(energy);
+            if(who == "player"){
+                playerLand(hex);
+                hex.flag = "new";
+            } else if(who == "enemy"){
+                enemyLand(hex);
+                hex.flag = "old";
+                hex.id.classList.add("flagOld");
+            }
             who == "player" ? playerLand(hex) : enemyLand(hex);
             if(hex.tree){
                 hex.id.classList.add("flag_Tree"); 
             } else if(hex.treeChild){
                 hex.id.classList.add("flag_TreeChild");
             }else{hex.id.classList.add("flag")}
-            hex.flag = "new";
-            flagHexs.push(hex);
             break;
         }
     }

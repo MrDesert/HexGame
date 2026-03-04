@@ -210,6 +210,16 @@ body {
 .grayScale{
    filter: grayscale(60%);
 }
+#actionBtns {
+   position: absolute;
+   z-index: 5;
+   height: 60px;
+   width: 160px;
+   border: solid black 2px;
+   bottom: 0px;
+   left: 50%;
+   transform: translateX(-50%);
+}
 #map {
    display: flex;
    position: absolute;
@@ -223,7 +233,13 @@ body {
    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
    margin-right: 0px; /* Гексы наезжают друг на друга */
    margin: 2px; /* Чтобы не слипались */
-   transition: background-color 0.3s; /* Для плавной смены цвета */
+   transition: background-color 0.3s, background-image 0.3s, background-size 0.5s; /* Для плавной смены цвета */
+   background-size: 70%;
+   background-repeat: no-repeat;
+   background-position: center;
+}
+.hex:hover{
+   box-shadow: inset 0 0 0 999px rgba(255, 255, 255, 0.1);
 }
 .grass{
    background-color: olive;
@@ -233,43 +249,28 @@ body {
 }
 .enemyGrass{
    background-color: green;
-   filter: grayscale(70%);
+   filter: grayscale(60%);
 }
 .treeChild{
    background-image: url("img/firLitle.png");
-   background-size: 70%;
-   background-repeat: no-repeat;
-   background-position: center;
 }
 .tree{
    background-image: url("img/firBig.png");
-   background-size: 70%;
-   background-repeat: no-repeat;
-   background-position: center;
 }
 .house{
    background-image: url("img/house.png");
-   background-size: 70%;
-   background-repeat: no-repeat;
-   background-position: center;
 }
 .flag{
    background-image: url("img/flag.png");
-   background-size: 70%;
-   background-repeat: no-repeat;
-   background-position: center;
 }
 .flag_Tree{
    background-image: url("img/firBig_flag.png");
-   background-size: 70%;
-   background-repeat: no-repeat;
-   background-position: center;
 }
 .flag_TreeChild{
    background-image: url("img/firLitle_flag.png");
-   background-size: 70%;
-   background-repeat: no-repeat;
-   background-position: center;
+}
+.flagOld{
+   background-size: 55%;   
 }
 #step{
    position: absolute;

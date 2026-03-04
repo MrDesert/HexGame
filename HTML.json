@@ -45,5 +45,8 @@
     "energyInfo":{
         "Parent": "stat",
         "Class": "inline-block"
-    }
+    },
+"actionBtns":{
+    "Parent": "body"
+}
 }
