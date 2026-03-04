@@ -20,12 +20,13 @@
 },
     "money":{
         "Parent": "stat",
-        "Text": "Монет: ",
-        "Class": "inline-block"
+        "Tag": "img",
+        "Src": "coin",
+        "Class": "icon"
     },
     "moneyInfo":{
         "Parent": "stat",
-        "Class": "inline-block"
+        "Tag": "span"
     },
     "wood":{
         "Parent": "stat",

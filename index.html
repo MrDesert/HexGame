@@ -3,17 +3,17 @@
     <head>
         <title>HexGame</title>
         <link rel="stylesheet" href="style.css">
-        <link rel="stylesheet" href="forGame.css" onerror="this.onerror=null;this.href='https://mrdesert.github.io/Tools/forGame.css'"> <!-- Локальный файл для релиза, сетевой для разработки -->
-        <script src="math.js" onerror="this.onerror=null; const newScript = document.createElement('script'); newScript.src = 'https://mrdesert.github.io/Tools/math.js'; document.head.appendChild(newScript);"></script><!-- Локальный файл для релиза, сетевой для разработки -->
-        <script src="DOM.js" onerror="this.onerror=null; const newScript = document.createElement('script'); newScript.src = 'https://mrdesert.github.io/Tools/DOM.js'; document.head.appendChild(newScript);"></script><!-- Локальный файл для релиза, сетевой для разработки -->
-        <script src="main.js" onerror="this.onerror=null; const newScript = document.createElement('script'); newScript.src = 'https://mrdesert.github.io/Tools/main.js'; document.head.appendChild(newScript);"></script><!-- Локальный файл для релиза, сетевой для разработки -->
+        <link rel="stylesheet" href="tools/forGame.css" onerror="this.onerror=null;this.href='https://mrdesert.github.io/Tools/forGame.css'"> <!-- Локальный файл для релиза, сетевой для разработки -->
+        <script src="tools/math.js" onerror="this.onerror=null; const newScript = document.createElement('script'); newScript.src = 'https://mrdesert.github.io/Tools/math.js'; document.head.appendChild(newScript);"></script><!-- Локальный файл для релиза, сетевой для разработки -->
+        <script src="tools/DOM.js" onerror="this.onerror=null; const newScript = document.createElement('script'); newScript.src = 'https://mrdesert.github.io/Tools/DOM.js'; document.head.appendChild(newScript);"></script><!-- Локальный файл для релиза, сетевой для разработки -->
+        <script src="tools/main.js" onerror="this.onerror=null; const newScript = document.createElement('script'); newScript.src = 'https://mrdesert.github.io/Tools/main.js'; document.head.appendChild(newScript);"></script><!-- Локальный файл для релиза, сетевой для разработки -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <meta charset="utf-8">
     </head>
     <body id="body" style="height: 100vh;">
-        <script src="forGame.js" onerror="this.onerror=null; const newScript = document.createElement('script'); newScript.src = 'https://mrdesert.github.io/Tools/forGame.js'; document.body.appendChild(newScript);"></script><!-- Локальный файл для релиза, сетевой для разработки -->
+        <script src="tools/forGame.js" onerror="this.onerror=null; const newScript = document.createElement('script'); newScript.src = 'https://mrdesert.github.io/Tools/forGame.js'; document.body.appendChild(newScript);"></script><!-- Локальный файл для релиза, сетевой для разработки -->
         <!--Установить false перед релизом-->
-        <script src="console.js" 
+        <script src="tools/console.js" 
             onload="createConsole(true, 'F2')" 
             onerror="
                 this.onerror=null; 
@@ -24,7 +24,7 @@
                 document.body.appendChild(newScript);">
         </script>
         <!-- Локальный файл для релиза, сетевой для разработки -->
-        <script src="YSDK.js" 
+        <script src="tools/YSDK.js" 
             onload="useSDK(false)" 
             onerror="
                 this.onerror=null; 
@@ -34,10 +34,10 @@
                 newScript.onerror=function(){console.log('НетСетевогоФайла')}
                 document.head.appendChild(newScript);">
         </script>
-        <script src="HTML.js" onerror="this.onerror=null; const newScript = document.createElement('script'); newScript.src = 'https://mrdesert.github.io/Tools/HTML.js'; document.body.appendChild(newScript);"></script><!-- Локальный файл для релиза, сетевой для разработки -->
+        <script src="tools/HTML.js" onerror="this.onerror=null; const newScript = document.createElement('script'); newScript.src = 'https://mrdesert.github.io/Tools/HTML.js'; document.body.appendChild(newScript);"></script><!-- Локальный файл для релиза, сетевой для разработки -->
         <div id="preloaderID"><div id="preloaderCentr"><span id="loading"></span><span id="preloaderTextID">...</span></div></div>
         <div id="blurID" hidden><span id="continue">Продолжить</span></div>
-        <footer style="z-index: 4;">© MrDesert - v0.0.2.9</footer>
+        <footer style="z-index: 4;">© MrDesert - v0.0.3.0</footer>
         <script src="script.js"></script>
     </body>
 </html>

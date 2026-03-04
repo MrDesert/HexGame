@@ -1,5 +1,8 @@
 {
     "house":"img/house.png",
     "firBig":"img/firBig.png",
-    "firLitle":"img/firLitle.png"
+    "firLitle":"img/firLitle.png",
+    "coin": "img/coin.png",
+    "flag": "img/flag.png",
+    "wheat": "img/wheat.png"
 }

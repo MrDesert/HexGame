@@ -232,7 +232,8 @@ body {
    background-color: green;
 }
 .enemyGrass{
-   background-color: darkolivegreen;
+   background-color: green;
+   filter: grayscale(70%);
 }
 .treeChild{
    background-image: url("img/firLitle.png");
@@ -252,6 +253,24 @@ body {
    background-repeat: no-repeat;
    background-position: center;
 }
+.flag{
+   background-image: url("img/flag.png");
+   background-size: 70%;
+   background-repeat: no-repeat;
+   background-position: center;
+}
+.flag_Tree{
+   background-image: url("img/firBig_flag.png");
+   background-size: 70%;
+   background-repeat: no-repeat;
+   background-position: center;
+}
+.flag_TreeChild{
+   background-image: url("img/firLitle_flag.png");
+   background-size: 70%;
+   background-repeat: no-repeat;
+   background-position: center;
+}
 #step{
    position: absolute;
    z-index: 100;
@@ -260,7 +279,14 @@ body {
    font-size: 40px;
 }
 #stat{
+   display: flex;
    position: absolute;
    z-index: 100;
    right: 20px;
+}
+.icon{
+   margin-right: 4px;
+   margin-left: 4px;
+   width: 16px;
+   height: 16px;
 }
