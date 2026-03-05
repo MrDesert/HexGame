@@ -1,7 +1,12 @@
 {
     "house":"img/house.png",
     "firBig":"img/firBig.png",
+    "firBig_flag":"img/firBig_flag.png",
     "firLitle":"img/firLitle.png",
+    "firLitle_flag":"img/firLitle_flag.png",
+    "firewood":"img/firewood.png",
+    "energy":"img/energy.png",
+    "food": "img/food.png",
     "coin": "img/coin.png",
     "flag": "img/flag.png",
     "wheat": "img/wheat.png"

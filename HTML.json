@@ -30,23 +30,39 @@
     },
     "wood":{
         "Parent": "stat",
-        "Text": ". Древисина: ",
-        "Class": "inline-block"
+        "Tag": "img",
+        "Src": "firewood",
+        "Class": "icon"
     },
     "woodInfo":{
         "Parent": "stat",
-        "Class": "inline-block"
+        "Tag": "span"
     },
     "energy":{
         "Parent": "stat",
-        "Text": ". Энергия: ",
-        "Class": "inline-block"
+        "Tag": "img",
+        "Src": "energy",
+        "Class": "icon"
     },
     "energyInfo":{
         "Parent": "stat",
-        "Class": "inline-block"
+        "Tag": "span"
+    },
+    "food":{
+        "Parent": "stat",
+        "Tag": "img",
+        "Src": "food",
+        "Class": "icon"
+    },
+    "foodInfo":{
+        "Parent": "stat",
+        "Tag": "span"
     },
 "actionBtns":{
     "Parent": "body"
-}
+},
+    "actionFlag":{
+        "Parent": "actionBtns",
+        "OnClick": "seizureTerritory()"
+    }
 }

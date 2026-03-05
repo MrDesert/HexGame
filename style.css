@@ -213,12 +213,22 @@ body {
 #actionBtns {
    position: absolute;
    z-index: 5;
-   height: 60px;
-   width: 160px;
+   height: 70px;
+   width: 260px;
    border: solid black 2px;
    bottom: 0px;
    left: 50%;
    transform: translateX(-50%);
+}
+#actionFlag {
+   position: absolute;
+   bottom: 0px;
+   height: 90%;
+   width: 60px;
+   background-color: #8c00ff;
+}
+#actionFlag:hover {
+   height: 100%;
 }
 #map {
    display: flex;
@@ -257,6 +267,9 @@ body {
 .tree{
    background-image: url("img/firBig.png");
 }
+.wheat{
+   background-image: url("img/wheat.png");
+}
 .house{
    background-image: url("img/house.png");
 }
@@ -272,6 +285,14 @@ body {
 .flagOld{
    background-size: 55%;   
 }
+.availableCell{
+   background-color: rgba(145, 145, 145, 0.9);
+}
+.availableCell:hover{
+   background-image: url("img/flag.png");
+   background-color: rgba(255, 255, 255, 0);
+   filter: grayscale(10%) opacity(40%);
+}
 #step{
    position: absolute;
    z-index: 100;
@@ -284,10 +305,12 @@ body {
    position: absolute;
    z-index: 100;
    right: 20px;
+   font-size: 30px;
+   font-weight: 600;
 }
 .icon{
    margin-right: 4px;
    margin-left: 4px;
-   width: 16px;
-   height: 16px;
+   width: 30px;
+   height: 30px;
 }
