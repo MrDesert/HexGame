@@ -172,7 +172,7 @@ function nextStep(){
             if(hex.item == "void"){
                 finance(1);
             }
-            Object.assign(availableCells, neighboringСells(hex));
+            availableCells = [...availableCells, ...neighboringСells(hex)];
         }
         if(hex.land == "enemy"){
             enemyCells.push(hex)
@@ -223,8 +223,8 @@ function energyPlus(value){
 }
 function treeGrowth(hex, chance){
     if(Math.round(Math.random()*chance)<1){
-        document.getElementById("hex"+hex.row+hex.col)?.classList.add("tree");
-        document.getElementById("hex"+hex.row+hex.col)?.classList.remove("treeChild", "flag_TreeChild", "flagOld");
+        hex.id.classList.add("tree");
+        hex.id.classList.remove("treeChild", "flag_TreeChild", "flagOld");
         hex.item = "tree";
     }
 }
