@@ -19,8 +19,6 @@ function startGame() {
         const col = Math.ceil(window.innerWidth/ 85)+1;
         const row = Math.ceil(window.innerHeight/ 100)+1;
         createHexGrid(row, col, 'map');
-        addEdgeFog();
-        // addHexEdgeFog()
         finance(0);
         woodChange(0);
         energyChange(0);
@@ -102,19 +100,15 @@ function createHexGrid(rows, cols, containerId) {
             hex.dataset.col = Col;
             hex.onclick = ()=> hexAction(Row, Col);
             
-            hex.style.position = 'absolute';
-            hex.style.left = (Col * 80) + 'px'; // 70px чтобы наезжали по горизонтали
-            
-            // Расчет вертикальной позиции
-            let top = Row * 90; // 75% высоты для вертикального нахлеста
-            
+            let top = Row * 90; 
             // Сдвигаем каждый второй столбец вниз
             if (Col % 2 === 1) {
                 top += 45;
             }
-            
+
+            hex.style.left = (Col * 80) + 'px'; 
             hex.style.top = top + 'px';
-            const Tree = Math.floor(Math.random()*39) == 0? true : false;
+
             let Item = "void";
             if(Math.floor(Math.random()*39) == 0){
                 Item = "tree";
@@ -126,7 +120,7 @@ function createHexGrid(rows, cols, containerId) {
             }
             container.appendChild(hex);
             mapHexs[Row].push(hexs.length);
-            hexs.push({row: Row, col: Col, land: "grass", item: Item, id: document.getElementById("hex"+Row+Col)});
+            hexs.push({row: Row, col: Col, land: "grass", item: Item, flag: "none", id: document.getElementById("hex"+Row+Col)});
         }
     }
     playerLand(playrsHex());
@@ -187,11 +181,9 @@ function nextStep(){
             energyPlus(2);
         }
         if(hex.flag == "new"){
-            hex.flag = "old";
-            hex.id.classList.add("flagOld");
+            classFlag(hex, "old");
         } else if (hex.flag == "old"){
-            hex.id.classList.remove("flagOld", "flag", "flag_Tree", "flag_TreeChild");
-            hex.flag = "none";
+            classFlag(hex, "none");
         }
     })
     let cells;
@@ -222,22 +214,23 @@ function energyPlus(value){
     energyChange(0);
 }
 function treeGrowth(hex, chance){
-    if(Math.round(Math.random()*chance)<1){
-        hex.id.classList.add("tree");
-        hex.id.classList.remove("treeChild", "flag_TreeChild", "flagOld");
-        hex.item = "tree";
+    if(Math.round(Math.random()*chance)<1){5
+        classItem(hex, "tree")    
     }
 }
 function newTreeChild(hex, chance){
         const cells = neighboringСells(hex);
         cells.forEach(cell => {
             if(cell.item == "void" && Math.round(Math.random()*chance)<1){
-                cell.id.classList.add("treeChild");
-                cell.item = "treeChild";
+                classItem(cell, "treeChild");
             }
         })
 }
-
+function classItem(hex, item){
+        hex.id.classList.remove("tree", "treeChild", "wheat", "house", "void");
+        hex.id.classList.add(item);
+        hex.item = item;
+}
 function neighboringСells(hex){
     rowPlusMinus = hex.col % 2 ? 1 : -1;
     const result = []
@@ -253,10 +246,9 @@ function hexAction(row, col){
 const hex = hexs[mapHexs[row][col]]
 if(hex.land == "player"){
     if(hex.item == "tree" && energy > 1){
-        hex.id.classList.remove("tree", "flag_Tree", "flagOld");
-        hex.item = "void";
         woodChange(5);
         energyChange(-2);
+        classItem(hex, "void");
     }else if(hex.item == "treeChild"){
         if(money > 4 && energy > 0){
             finance(-5);
@@ -269,20 +261,17 @@ if(hex.land == "player"){
             finance(-30);
             energyMax += 3;
             energyChange(-3);
-            hex.item = "house";
-            hex.id.classList.add("house");
+            classItem(hex, "house")
         } else if(hex.item != "treeChild" && money > 9 && energy > 1) {
             finance(-10);
             energyChange(-2);
-            hex.id.classList.add("treeChild");
-            hex.item = "treeChild";
+            classItem(hex, "treeChild")
         }
     } else if(hex.item == "wheat"){
         if(energy > 0){
             energyChange(-1);
             foodChange(1);
-            hex.item = "void"
-            hex.id.classList.remove("wheat");
+            classItem(hex, "void");
         }
     }
 } else if (hex.land == "enemy" && energy > 5){
@@ -301,24 +290,33 @@ function raisingFlaf(hex, energy, who){
             energyChange(energy);
             if(who == "player"){
                 playerLand(hex);
-                hex.flag = "new";
+                classFlag(hex, "new");
             } else if(who == "enemy"){
                 enemyLand(hex);
-                hex.flag = "old";
-                hex.id.classList.add("flagOld");
+                classFlag(hex, "old");
             }
-            who == "player" ? playerLand(hex) : enemyLand(hex);
-            if(hex.item == "tree"){
-                hex.id.classList.add("flag_Tree"); 
-            } else if(hex.item == "treeChild"){
-                hex.id.classList.add("flag_TreeChild");
-            }else{hex.id.classList.add("flag")}
             break;
         }
     }
 }
+function classFlag(hex, flag){
+    myLog(flag)
+    hex.flag = flag;
+    if(flag == "new" && hex.item == "void"){
+        hex.id.classList.add("flag");
+    } else if (flag == "new"){
+        hex.id.classList.add("flag_Item");
+    }
+    if(flag == "old" && hex.land == "enemy"){
+        hex.id.classList.add("flag", "flagOld");
+    } else if(flag == "old"){
+        hex.id.classList.add("flagOld");
+    }
+    if(flag == "none"){
+        hex.id.classList.remove("flag", "flag_Item", "flagOld");
+    }
+}
 function seizureTerritory() {
-    myLog("flag")
     availableCells.forEach(hex => {
         if(hex.land != "player"){
             hex.id.classList.add("availableCell");
@@ -340,42 +338,4 @@ function energyChange(e){
 function foodChange(f){
     food += f;
     ID.foodInfo.textContent = food;
-}
-
-function addEdgeFog() {
-    const fog = document.createElement('div');
-    fog.id = 'edge-fog';
-    fog.style.position = 'absolute';
-    fog.style.top = '0';
-    fog.style.left = '0';
-    fog.style.width = '100%';
-    fog.style.height = '100%';
-    fog.style.pointerEvents = 'none';
-    fog.style.zIndex = '20';
-    fog.style.boxShadow = 'inset 0 0 80px 40px rgba(104, 104, 104, 1)';
-    
-    document.body.appendChild(fog);
-}
-
-function addHexEdgeFog() {
-    const fog = document.createElement('div');
-    fog.id = 'edge-fog';
-    fog.style.position = 'absolute';
-    fog.style.top = '0';
-    fog.style.left = '0';
-    fog.style.width = '100%';
-    fog.style.height = '100%';
-    fog.style.pointerEvents = 'none';
-    fog.style.zIndex = '20';
-    
-    // Маска из нескольких градиентов
-    fog.style.background = `
-        linear-gradient(to right, rgba(83, 83, 83, 1) 0%, transparent 10%),
-        linear-gradient(to left, rgba(83, 83, 83, 1) 0%, transparent 10%),
-        linear-gradient(to top, rgba(83, 83, 83, 1) 0%, transparent 10%),
-        linear-gradient(to bottom, rgba(83, 83, 83, 1) 0%, transparent 10%)
-    `;
-    fog.style.backgroundBlendMode = 'normal';
-    
-    document.body.appendChild(fog);
 }

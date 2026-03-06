@@ -64,5 +64,8 @@
     "actionFlag":{
         "Parent": "actionBtns",
         "OnClick": "seizureTerritory()"
-    }
+    },
+"edge-fog":{
+    "Parent": "body"
+}
 }
