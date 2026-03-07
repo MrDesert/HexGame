@@ -63,8 +63,26 @@
 },
     "actionFlag":{
         "Parent": "actionBtns",
-        "OnClick": "seizureTerritory()"
+        "Class": "actionBtn",
+        "OnClick": "seizureTerritory(true)"
     },
+        "actionFlagIMG":{
+            "Parent": "actionFlag",
+            "Class": "actionBtnIMG",
+            "Tag": "img",
+            "Src": "flag"
+        },
+    "actionTree":{
+        "Parent": "actionBtns",
+        "Class": "actionBtn",
+        "OnClick": "plantTree(true)"
+    },
+        "actionTreeIMG":{
+            "Parent": "actionTree",
+            "Class": "actionBtnIMG",
+            "Tag": "img",
+            "Src": "firBig"
+        },
 "edge-fog":{
     "Parent": "body"
 }

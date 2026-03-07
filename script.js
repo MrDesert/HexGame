@@ -4,12 +4,15 @@ let pausescreen = false;
 const hexs = [];
 const mapHexs = [];
 let enemyCells = [];
+let playerCells = [];
 let availableCells = [];
 let money = 0;
 let wood = 0;
 let food = 0;
 let energy = 3;
 let energyMax = 3;
+let seizTerr = false;
+let plTree = false;
 
 function startGame() {
     if(sdkLoad && resurses && HTMLLoaded){
@@ -87,15 +90,15 @@ window.addEventListener('focus', ()=>{
 
 function createHexGrid(rows, cols, containerId) {
     const container = ID.map;
-    container.style.width = window.innerWidth+20 + 'px';
-    container.style.height = window.innerHeight+40 + 'px';
+    container.style.width = window.innerWidth+125 + 'px';
+    container.style.height = window.innerHeight+150 + 'px';
+    container.style.cursor = 'grab';
     
     for (let Row = 0; Row < rows; Row++) {
         mapHexs.push([]);
         for (let Col = 0; Col < cols; Col++) {
             const hex = document.createElement('div');
             hex.id = "hex"+Row+Col;
-            hex.className = 'hex grass';
             hex.dataset.row = Row;
             hex.dataset.col = Col;
             hex.onclick = ()=> hexAction(Row, Col);
@@ -108,9 +111,16 @@ function createHexGrid(rows, cols, containerId) {
 
             hex.style.left = (Col * 80) + 'px'; 
             hex.style.top = top + 'px';
-
+            let Land = "grass"
             let Item = "void";
-            if(Math.floor(Math.random()*39) == 0){
+            if(Math.floor(Math.random()*7) == 0){
+                Land = "water";
+                Item = "none";
+                hex.className = 'hex water';
+            }else{
+                hex.className = 'hex grass';
+            }
+            if(Item == "void" && Math.floor(Math.random()*39) == 0){
                 Item = "tree";
                 hex.classList.add("tree");
             }
@@ -120,11 +130,16 @@ function createHexGrid(rows, cols, containerId) {
             }
             container.appendChild(hex);
             mapHexs[Row].push(hexs.length);
-            hexs.push({row: Row, col: Col, land: "grass", item: Item, flag: "none", id: document.getElementById("hex"+Row+Col)});
+            hexs.push({row: Row, col: Col, land: Land, item: Item, flag: "none", id: document.getElementById("hex"+Row+Col)});
         }
     }
-    playerLand(playrsHex());
+    const startHex = playrsHex();
+    availableCells = [...availableCells, ...neighboringСells(startHex)];
+    playerCells.push(startHex);
+    playerLand(startHex);
     enemyLand(playrsHex());
+
+    initMapControls();
 }
 function playrsHex(){
     const playrHex = Math.floor(Math.random()*hexs.length);
@@ -141,6 +156,9 @@ function enemyLand(hex){
     hex.id?.classList.add("enemyGrass");
 }
 function nextStep(){
+    availableCells = [];
+    playerCells = [];
+    ID.map.style.cursor = 'grab';
     energyPlus(3);
     hexs.forEach(hex => {
             console.log(money)
@@ -166,6 +184,7 @@ function nextStep(){
             if(hex.item == "void"){
                 finance(1);
             }
+            playerCells.push(hex);
             availableCells = [...availableCells, ...neighboringСells(hex)];
         }
         if(hex.land == "enemy"){
@@ -185,6 +204,7 @@ function nextStep(){
         } else if (hex.flag == "old"){
             classFlag(hex, "none");
         }
+        hex.id.classList.remove("availableCell");
     })
     let cells;
     let next = false; 
@@ -198,10 +218,18 @@ function nextStep(){
     } while (!next);
     let stepEnemy;
     do {stepEnemy = cells[Math.floor(Math.random()*cells.length)];
-    } while (stepEnemy && stepEnemy.land == "enemy" || !stepEnemy);
+    } while (stepEnemy && stepEnemy.land == "enemy" || !stepEnemy || stepEnemy.land == "water");
     enemyLand(stepEnemy);
     enemyCells = [];
     raisingFlaf(stepEnemy, 0, "enemy");
+
+    
+    const actionBtns = [ID.actionFlag];
+    actionBtns.forEach(btn => {
+        btn.classList.remove("actionBtnTrue");
+    })
+    seizTerr = false;
+    plTree = false;
 }
 function energyPlus(value){
     if (energy < energyMax){
@@ -245,11 +273,11 @@ function neighboringСells(hex){
 function hexAction(row, col){
 const hex = hexs[mapHexs[row][col]]
 if(hex.land == "player"){
-    if(hex.item == "tree" && energy > 1){
+    if(plTree && hex.item == "tree" && energy > 1){
         woodChange(5);
         energyChange(-2);
         classItem(hex, "void");
-    }else if(hex.item == "treeChild"){
+    }else if(plTree && hex.item == "treeChild"){
         if(money > 4 && energy > 0){
             finance(-5);
             energyChange(-1);
@@ -262,7 +290,7 @@ if(hex.land == "player"){
             energyMax += 3;
             energyChange(-3);
             classItem(hex, "house")
-        } else if(hex.item != "treeChild" && money > 9 && energy > 1) {
+        } else if(plTree && hex.item != "treeChild" && money > 9 && energy > 1) {
             finance(-10);
             energyChange(-2);
             classItem(hex, "treeChild")
@@ -274,9 +302,9 @@ if(hex.land == "player"){
             classItem(hex, "void");
         }
     }
-} else if (hex.land == "enemy" && energy > 5){
+} else if (seizTerr && hex.land == "enemy" && energy > 5){
     raisingFlaf(hex, -6, "player")
-} else if (hex.land == "grass" && energy > 2){
+} else if (seizTerr && hex.land == "grass" && energy > 2){
     raisingFlaf(hex, -3, "player");
 } 
 if(energy <= 0){
@@ -316,12 +344,47 @@ function classFlag(hex, flag){
         hex.id.classList.remove("flag", "flag_Item", "flagOld");
     }
 }
-function seizureTerritory() {
+function plantTree(bool){
+    plTree = bool;
+    if(bool){
+        seizureTerritory(false);
+        ID.actionTree.classList.add("actionBtnTrue");
+        playerCells.forEach(hex => {
+            if(hex.item == "void"){
+                hex.id.classList.add("availableTree");
+            }
+        })
+    }else{
+        ID.actionTree.classList.remove("actionBtnTrue");
+        playerCells.forEach(hex => {
+            hex.id.classList.remove("availableTree");
+        })
+    }
+}
+function seizureTerritory(bool) {
+    seizTerr = bool;
+    if(bool){
+        plantTree(false);
     availableCells.forEach(hex => {
-        if(hex.land != "player"){
+        let bool2 = false;
+        const cells = neighboringСells(hex);
+        for(const cell of cells){
+            if(hex.land != "water" && cell.land == "player"){
+                bool2 = true;
+                break
+            }
+        }
+        if(hex.land != "player" && bool2){
             hex.id.classList.add("availableCell");
         }
     })
+    ID.actionFlag.classList.add("actionBtnTrue");
+    }else {
+        availableCells.forEach(hex => {
+            hex.id.classList.remove("availableCell");
+        })
+        ID.actionFlag.classList.remove("actionBtnTrue");
+    }
 }
 function finance(m) {
     money += m;
@@ -338,4 +401,126 @@ function energyChange(e){
 function foodChange(f){
     food += f;
     ID.foodInfo.textContent = food;
+}
+
+// Функция инициализации управления картой
+function initMapControls() {
+    // Получаем DOM-элемент карты (убеждаемся что он уже создан)
+    const map = ID.map;
+    
+    // Переменные для управления
+    let scale = 0.6;
+    let offsetX = 0;
+    let offsetY = 0;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+
+    function getMapBounds() {
+    const containerWidth = window.innerWidth;
+    const containerHeight = window.innerHeight;
+    const mapWidth = map.scrollWidth * scale;
+    const mapHeight = map.scrollHeight * scale;
+    
+    const margin = 0.3; // 20% от размера экрана
+    
+    return {
+        minX: Math.min(0, containerWidth - mapWidth) - (containerWidth * margin),
+        maxX: Math.max(0, containerWidth - mapWidth) + (containerWidth * margin),
+        minY: Math.min(0, containerHeight - mapHeight) - (containerHeight * margin),
+        maxY: Math.max(0, containerHeight - mapHeight) + (containerHeight * margin)
+    };
+}
+    
+    // Настройка CSS
+    map.style.transformOrigin = '0 0';
+    startTransform();
+        // Центрируем карту при старте
+    function startTransform() {
+        // Получаем размеры контейнера и карты
+        const containerWidth = window.innerWidth;
+        const containerHeight = window.innerHeight;
+        const mapWidth = map.scrollWidth * scale;
+        const mapHeight = map.scrollHeight * scale;
+        
+        // Вычисляем смещение для центрирования
+        offsetX = (containerWidth - mapWidth) / 2;
+        offsetY = (containerHeight - mapHeight) / 2;
+        
+        updateTransform();
+    }
+    // Функция применения трансформации
+function updateTransform() {
+    const bounds = getMapBounds();
+    offsetX = Math.min(bounds.maxX, Math.max(bounds.minX, offsetX));
+    offsetY = Math.min(bounds.maxY, Math.max(bounds.minY, offsetY));
+    
+    map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+}
+    
+// Зум колесиком с приближением к курсору
+    map.addEventListener('wheel', (e) => {
+        e.preventDefault();
+    
+        // Координаты мыши относительно окна
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+    
+        // Координаты мыши относительно карты ДО зуда
+        const mouseMapX = (mouseX - offsetX) / scale;
+        const mouseMapY = (mouseY - offsetY) / scale;
+    
+        // Новый масштаб
+        const delta = e.deltaY > 0 ? 0.9 : 1.1;
+        let newScale = scale * delta;
+        newScale = Math.min(Math.max(0.4, newScale), 2);
+    
+        // Новые координаты мыши относительно карты ПОСЛЕ зума
+        const newMouseMapX = (mouseX - offsetX) / newScale;
+        const newMouseMapY = (mouseY - offsetY) / newScale;
+    
+        // Корректируем смещение, чтобы точка под мышкой осталась на месте
+        offsetX += (newMouseMapX - mouseMapX) * newScale;
+        offsetY += (newMouseMapY - mouseMapY) * newScale;
+    
+        scale = newScale;
+        updateTransform();
+    });
+    
+    // Начало перетаскивания
+    map.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.clientX - offsetX;
+        startY = e.clientY - offsetY;
+        map.style.cursor = 'grabbing';
+    });
+    
+    // Движение мыши
+document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    
+    let newOffsetX = e.clientX - startX;
+    let newOffsetY = e.clientY - startY;
+    
+    const bounds = getMapBounds();
+    newOffsetX = Math.min(bounds.maxX, Math.max(bounds.minX, newOffsetX));
+    newOffsetY = Math.min(bounds.maxY, Math.max(bounds.minY, newOffsetY));
+    
+    offsetX = newOffsetX;
+    offsetY = newOffsetY;
+    
+    updateTransform();
+});
+    
+    // Конец перетаскивания
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+        map.style.cursor = 'grab';
+    });
+    
+    // Двойной клик - сброс
+    map.addEventListener('dblclick', () => {
+        scale = 0.6;
+        startTransform();
+    });
 }
