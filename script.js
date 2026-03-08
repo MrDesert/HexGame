@@ -6,6 +6,9 @@ const mapHexs = [];
 let enemyCells = [];
 let playerCells = [];
 let availableCells = [];
+let currentSeed = Math.floor(Math.random() * 1000000);
+let useSeed = false;
+let itemCounter = 0;
 let money = 0;
 let wood = 0;
 let food = 0;
@@ -19,9 +22,27 @@ function startGame() {
         changeLang(document.documentElement.lang);
         document.getElementById("preloaderID").hidden = "hidden";
         loadLocalStorage();
-        const col = Math.ceil(window.innerWidth/ 85)+1;
-        const row = Math.ceil(window.innerHeight/ 100)+1;
-        createHexGrid(row, col, 'map');
+// Базовый размер карты (можно менять)
+const baseCols = 30;
+const baseRows = 20;
+
+// Если используем сид - размер зависит от сида
+if (useSeed && currentSeed) {
+    // Используем seededRandom для определения размера
+    const randCol = seededRandom(currentSeed, 999999); // большой индекс чтобы не пересекался
+    const randRow = seededRandom(currentSeed, 999998);
+    
+    // Размер от 20 до 40 колонок и от 15 до 30 рядов
+    const cols = 5 + Math.floor(randCol * 21);
+    const rows = 5 + Math.floor(randRow * 16);
+    
+    createHexGrid(rows, cols, 'map');
+} else {
+    // Если нет сида - размер под экран
+    const cols = Math.ceil(window.innerWidth/ 85)+1;
+    const rows = Math.ceil(window.innerHeight/ 100)+1;
+    createHexGrid(rows, cols, 'map');
+}
         finance(0);
         woodChange(0);
         energyChange(0);
@@ -88,12 +109,427 @@ window.addEventListener('focus', ()=>{
     }
 })
 
+function applySeed() {
+    const seedInput = prompt("Введите сид (число):", currentSeed);
+    const seedValue = parseInt(seedInput);
+    if (!isNaN(seedValue)) {
+        currentSeed = seedValue;
+        useSeed = true;
+        restartGame();
+    }
+}
+
+function randomSeed() {
+    currentSeed = Math.floor(Math.random() * 1000000);
+    useSeed = true;
+    alert("Новый сид: " + currentSeed);
+    restartGame();
+}
+
+function copySeed() {
+    navigator.clipboard.writeText(currentSeed.toString());
+    alert("Сид скопирован: " + currentSeed);
+}
+
+function restartGame() {
+    ID.map.innerHTML = '';
+    hexs.length = 0;
+    mapHexs.length = 0;
+    availableCells = [];
+    playerCells = [];
+    enemyCells = [];
+    
+if (useSeed && currentSeed) {
+    const randCol = seededRandom(currentSeed, 999999);
+    const randRow = seededRandom(currentSeed, 999998);
+    
+    const cols = 5 + Math.floor(randCol * 21);
+    const rows = 5 + Math.floor(randRow * 16);
+    
+    createHexGrid(rows, cols, 'map');
+} else {
+    const cols = Math.ceil(window.innerWidth/ 85)+1;
+    const rows = Math.ceil(window.innerHeight/ 100)+1;
+    createHexGrid(rows, cols, 'map');
+}ы
+}
+
+function seededRandom(seed, index) {
+    const value = Math.sin(seed * 9999 + index) * 10000;
+    return value - Math.floor(value);
+}
+
 function createHexGrid(rows, cols, containerId) {
     const container = ID.map;
-    container.style.width = window.innerWidth+125 + 'px';
-    container.style.height = window.innerHeight+150 + 'px';
+    container.style.width = cols*81+19 + 'px';
+    container.style.height = rows*89+55 + 'px';
     container.style.cursor = 'grab';
+    itemCounter = 0; // Сбрасываем счетчик
+    let typeWater;
+    let randomTypeWater;
+    let waterCells = [];
+    let waterCellsMaxRandom;
+    if (useSeed && currentSeed) {
+        randomTypeWater = seededRandom(currentSeed, 1234567890);
+        waterCellsMaxRandom = seededRandom(currentSeed, 234567890);
+    } else {
+        randomTypeWater = Math.random();
+        waterCellsMaxRandom = Math.random();
+    }
+    const allcells= rows*cols
+    const waterCellsMax = Math.floor(waterCellsMaxRandom*(allcells/7))+Math.floor(allcells/50)+3;
+    myLog(waterCellsMax)
+    const randomWater = Math.floor(randomTypeWater*5);
+    if(randomWater == 0){
+        typeWater = "swamp";
+    } else if(randomWater == 1) {
+        typeWater = "river";
+    } else if(randomWater == 2) {
+        typeWater = "sea";
+    } else if(randomWater == 3) {
+        typeWater = "lake";
+    } else {
+        typeWater = "none";
+    }
+    myLog(typeWater)
+
+        // Вспомогательные функции для работы с соседями
+    function getNeighbors(row, col) {
+        const rowOffset = col % 2 ? 1 : -1;
+        return [
+            [row-1, col], [row+1, col], [row, col-1], [row, col+1],
+            [row+rowOffset, col-1], [row+rowOffset, col+1]
+        ].filter(([r, c]) => r >= 0 && r < rows && c >= 0 && c < cols);
+    }
     
+    function isEdge(row, col) {
+        return row === 0 || row === rows-1 || col === 0 || col === cols-1;
+    }
+
+    // Функции генерации воды
+    function generateSwamp(count) {
+        for (let i = 0; i < count; i++) {
+            let placed = false;
+            let attempts = 0;
+            
+            while (!placed && attempts < 100) {
+                const row = Math.floor(Math.random() * rows);
+                const col = Math.floor(Math.random() * cols);
+                
+                // Проверяем, что клетка не вода и не рядом с водой
+                const neighbors = getNeighbors(row, col);
+                const hasWaterNearby = neighbors.some(([r, c]) => 
+                    waterCells.some(w => w[0] === r && w[1] === c)
+                );
+                
+                if (!hasWaterNearby && !waterCells.some(w => w[0] === row && w[1] === col)) {
+                    waterCells.push([row, col]);
+                    placed = true;
+                }
+                attempts++;
+            }
+        }
+    }
+    
+    function generateLake(count) {
+        // Выбираем стартовую точку не у края
+        let startRow, startCol;
+        let attempts = 0;
+        
+        do {
+            startRow = 1 + Math.floor(Math.random() * (rows - 2));
+            startCol = 1 + Math.floor(Math.random() * (cols - 2));
+            attempts++;
+        } while (attempts < 100 && waterCells.some(w => w[0] === startRow && w[1] === startCol));
+        
+        // BFS для создания формы
+        const queue = [[startRow, startCol]];
+        const visited = new Set();
+        visited.add(`${startRow},${startCol}`);
+        
+        while (waterCells.length < count && queue.length > 0) {
+            // Сортируем очередь для круглой формы
+            queue.sort((a, b) => {
+                const distA = Math.hypot(a[0] - startRow, a[1] - startCol);
+                const distB = Math.hypot(b[0] - startRow, b[1] - startCol);
+                return distA - distB;
+            });
+            
+            const [r, c] = queue.shift();
+            
+            // Проверяем, что не у края
+            if (r > 0 && r < rows-1 && c > 0 && c < cols-1) {
+                waterCells.push([r, c]);
+            }
+            
+            // Добавляем соседей
+            const neighbors = getNeighbors(r, c);
+            for (const [nr, nc] of neighbors) {
+                const key = `${nr},${nc}`;
+                if (!visited.has(key) && nr > 0 && nr < rows-1 && nc > 0 && nc < cols-1) {
+                    const dist = Math.hypot(nr - startRow, nc - startCol);
+                    const chance = 1 - (dist / (count / 2));
+                    const rand = useSeed && currentSeed ? seededRandom(currentSeed, itemCounter++) : Math.random();
+                    if (rand < chance) {
+                        queue.push([nr, nc]);
+                        visited.add(key);
+                    }
+                }
+            }
+        }
+    }
+    
+    function generateSea(count) {
+        const edgeCells = [];
+        
+        // Собираем все краевые клетки
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                if (isEdge(r, c)) {
+                    edgeCells.push([r, c]);
+                }
+            }
+        }
+        
+        // Перемешиваем
+        edgeCells.sort(() => Math.random() - 0.5);
+        
+        // Начинаем с нескольких точек на краю
+        const startPoints = edgeCells.slice(0, Math.min(3, edgeCells.length));
+        const queue = [...startPoints];
+        const visited = new Set(startPoints.map(p => `${p[0]},${p[1]}`));
+        
+        while (waterCells.length < count && queue.length > 0) {
+            const [r, c] = queue.shift();
+            waterCells.push([r, c]);
+            
+            const neighbors = getNeighbors(r, c);
+            for (const [nr, nc] of neighbors) {
+                const key = `${nr},${nc}`;
+                if (!visited.has(key) && waterCells.length < count) {
+                    const rand = useSeed && currentSeed ? seededRandom(currentSeed, itemCounter++) : Math.random();
+                    if (rand < 0.7) {
+                        queue.push([nr, nc]);
+                        visited.add(key);
+                    }
+                }
+            }
+        }
+    }
+    
+function generateRiver() {
+    let riverCells = [];
+    let maxLength = Math.floor(waterCellsMax * 0.9); // Река занимает ~80% водных клеток
+    
+    // Случайно выбираем тип реки (0 - от края до края, 1 - внутри)
+    let rand;
+    if (useSeed && currentSeed) {
+        rand = seededRandom(currentSeed, itemCounter++);
+    } else {
+        rand = Math.random();
+    }
+    const riverType = Math.floor(rand * 2); // 0 или 1
+    
+    if (riverType === 0) {
+        // Река от края до края
+        if (useSeed && currentSeed) {
+            rand = seededRandom(currentSeed, itemCounter++);
+        } else {
+            rand = Math.random();
+        }
+        const startEdge = Math.floor(rand * 4);
+        let startRow, startCol, direction;
+        
+        switch(startEdge) {
+            case 0: // верх
+                startRow = 0;
+                if (useSeed && currentSeed) {
+                    rand = seededRandom(currentSeed, itemCounter++);
+                } else {
+                    rand = Math.random();
+                }
+                startCol = 1 + Math.floor(rand * (cols - 2));
+                direction = [1, 0]; // вниз
+                break;
+            case 1: // право
+                if (useSeed && currentSeed) {
+                    rand = seededRandom(currentSeed, itemCounter++);
+                } else {
+                    rand = Math.random();
+                }
+                startRow = 1 + Math.floor(rand * (rows - 2));
+                startCol = cols - 1;
+                direction = [0, -1]; // влево
+                break;
+            case 2: // низ
+                if (useSeed && currentSeed) {
+                    rand = seededRandom(currentSeed, itemCounter++);
+                } else {
+                    rand = Math.random();
+                }
+                startRow = rows - 1;
+                startCol = 1 + Math.floor(rand * (cols - 2));
+                direction = [-1, 0]; // вверх
+                break;
+            case 3: // лево
+                if (useSeed && currentSeed) {
+                    rand = seededRandom(currentSeed, itemCounter++);
+                } else {
+                    rand = Math.random();
+                }
+                startRow = 1 + Math.floor(rand * (rows - 2));
+                startCol = 0;
+                direction = [0, 1]; // вправо
+                break;
+        }
+        
+        let currentRow = startRow;
+        let currentCol = startCol;
+        
+        // Добавляем стартовую клетку
+        riverCells.push([currentRow, currentCol]);
+        maxLength -= riverCells.length;
+        while (riverCells.length < maxLength) {
+            // Двигаемся
+            currentRow += direction[0];
+            currentCol += direction[1];
+            
+            // Проверяем границы
+            if (currentRow < 0 || currentRow >= rows || currentCol < 0 || currentCol >= cols) {
+                break;
+            }
+            
+            riverCells.push([currentRow, currentCol]);
+            
+            // Если дошли до другого края
+            if (isEdge(currentRow, currentCol)) {
+                break;
+            }
+            
+            // Иногда меняем направление
+            if (useSeed && currentSeed) {
+                rand = seededRandom(currentSeed, itemCounter++);
+            } else {
+                rand = Math.random();
+            }
+            if (rand < 0.3) {
+                if (useSeed && currentSeed) {
+                    rand = seededRandom(currentSeed, itemCounter++);
+                } else {
+                    rand = Math.random();
+                }
+                if (rand < 0.5) {
+                    direction = [direction[1], direction[0]];
+                } else {
+                    direction = [-direction[1], -direction[0]];
+                }
+            }
+        }
+    } else {
+        // Река внутри карты (может касаться краев)
+        if (useSeed && currentSeed) {
+            rand = seededRandom(currentSeed, itemCounter++);
+        } else {
+            rand = Math.random();
+        }
+        
+        // Начальная точка
+        let startRow = Math.floor(rand * rows);
+        if (useSeed && currentSeed) {
+            rand = seededRandom(currentSeed, itemCounter++);
+        } else {
+            rand = Math.random();
+        }
+        let startCol = Math.floor(rand * cols);
+        
+        // Начальное направление
+        let direction;
+        if (useSeed && currentSeed) {
+            rand = seededRandom(currentSeed, itemCounter++);
+        } else {
+            rand = Math.random();
+        }
+        const dirIndex = Math.floor(rand * 4);
+        const directions = [[1,0], [-1,0], [0,1], [0,-1]];
+        direction = directions[dirIndex];
+        
+        let currentRow = startRow;
+        let currentCol = startCol;
+        let length = 0;
+        
+        // Добавляем стартовую клетку
+        riverCells.push([currentRow, currentCol]);
+        length++;
+        maxLength -= riverCells.length;
+        while (length < maxLength) {
+            // Двигаемся
+            currentRow += direction[0];
+            currentCol += direction[1];
+            
+            // Проверяем границы
+            if (currentRow < 0 || currentRow >= rows || currentCol < 0 || currentCol >= cols) {
+                break;
+            }
+            
+            // Проверяем, не занята ли клетка
+            if (!riverCells.some(([r,c]) => r === currentRow && c === currentCol)) {
+                riverCells.push([currentRow, currentCol]);
+                length++;
+            }
+            
+            // Иногда меняем направление
+            if (useSeed && currentSeed) {
+                rand = seededRandom(currentSeed, itemCounter++);
+            } else {
+                rand = Math.random();
+            }
+            if (rand < 0.3) {
+                if (useSeed && currentSeed) {
+                    rand = seededRandom(currentSeed, itemCounter++);
+                } else {
+                    rand = Math.random();
+                }
+                if (rand < 0.4) {
+                    direction = [direction[1], direction[0]];
+                } else {
+                    direction = [-direction[1], -direction[0]];
+                }
+            }
+        }
+    }
+    
+    // Добавляем реку в waterCells
+    waterCells.push(...riverCells);
+    return riverCells;
+}
+    
+    /// Генерируем воду в зависимости от типа
+if (typeWater != "none") {
+    let totalWater = 0;
+    let attempts = 0;
+    const maxAttempts = 10;
+    
+    while (totalWater < waterCellsMax && attempts < maxAttempts) {
+        switch(typeWater) {
+            case "swamp":
+                generateSwamp(waterCellsMax - totalWater);
+                break;
+            case "lake":
+                generateLake(waterCellsMax - totalWater);
+                break;
+            case "sea":
+                generateSea(waterCellsMax - totalWater);
+                break;
+            case "river":
+                generateRiver();
+                break;
+        }
+        
+        totalWater = waterCells.length;
+        attempts++;
+    }
+}
+
     for (let Row = 0; Row < rows; Row++) {
         mapHexs.push([]);
         for (let Col = 0; Col < cols; Col++) {
@@ -112,42 +548,130 @@ function createHexGrid(rows, cols, containerId) {
             hex.style.left = (Col * 80) + 'px'; 
             hex.style.top = top + 'px';
             let Land = "grass"
-            let Item = "void";
-            if(Math.floor(Math.random()*7) == 0){
-                Land = "water";
-                Item = "none";
-                hex.className = 'hex water';
-            }else{
-                hex.className = 'hex grass';
-            }
-            if(Item == "void" && Math.floor(Math.random()*39) == 0){
-                Item = "tree";
-                hex.classList.add("tree");
-            }
-            if(Item == "void" && Math.floor(Math.random()*39) == 0){
-                Item = "wheat";
-                hex.classList.add("wheat");
-            }
+let Item = "void";
+
+// Используем seededRandom если включен сид
+let randomValue;
+if (useSeed && currentSeed) {
+    randomValue = seededRandom(currentSeed, itemCounter);
+} else {
+    randomValue = Math.random();
+}
+itemCounter++;
+
+// Проверяем, является ли клетка водой из сгенерированного списка
+const isWater = waterCells.some(([r, c]) => r === Row && c === Col);
+
+if (isWater) {
+    Land = "water";
+    Item = "none";
+    hex.className = 'hex water';
+} else {
+    hex.className = 'hex grass';
+}
+
+if(Item == "void"){
+    if (useSeed && currentSeed) {
+        randomValue = seededRandom(currentSeed, itemCounter);
+    } else {
+        randomValue = Math.random();
+    }
+    itemCounter++;
+    
+    if(Math.floor(randomValue * 39) == 0){
+        Item = "tree";
+        hex.classList.add("tree");
+    }
+}
+
+if(Item == "void"){
+    if (useSeed && currentSeed) {
+        randomValue = seededRandom(currentSeed, itemCounter);
+    } else {
+        randomValue = Math.random();
+    }
+    itemCounter++;
+    
+    // Проверяем, есть ли рядом вода
+    let hasWaterNearby = false;
+    const neighbors = getNeighbors(Row, Col);
+    for (const [nRow, nCol] of neighbors) {
+        // Проверяем по waterCells или по временным переменным
+        if (waterCells.some(([r,c]) => r === nRow && c === nCol)) {
+            hasWaterNearby = true;
+            break;
+        }
+    }
+    const wheatSwamp = typeWater === "swamp" ? 10 : 3;
+    // Если есть вода рядом - шанс 1/19, иначе 1/39
+    const chance = hasWaterNearby ? wheatSwamp : 39;
+    
+    if(Math.floor(randomValue * chance) == 0){
+        Item = "wheat";
+        hex.classList.add("wheat");
+    }
+}
             container.appendChild(hex);
             mapHexs[Row].push(hexs.length);
             hexs.push({row: Row, col: Col, land: Land, item: Item, flag: "none", id: document.getElementById("hex"+Row+Col)});
         }
     }
-    const startHex = playrsHex();
+function getStartPosition(offset, avoidHex = null, minDistance = 0) {
+    // Собираем все доступные клетки (только трава)
+    let availableHexes = hexs.filter(hex => hex.land == "grass");
+    
+    // Если есть клетка для избегания (игрок) и нужна минимальная дистанция
+    if (avoidHex && minDistance > 0) {
+        availableHexes = availableHexes.filter(hex => {
+            const distance = Math.abs(hex.row - avoidHex.row) + Math.abs(hex.col - avoidHex.col);
+            return distance >= minDistance;
+        });
+    }
+    
+    // Если нет травы - берем любые кроме воды
+    if (availableHexes.length === 0) {
+        availableHexes = hexs.filter(hex => hex.land != "water");
+        if (avoidHex && minDistance > 0) {
+            availableHexes = availableHexes.filter(hex => {
+                const distance = Math.abs(hex.row - avoidHex.row) + Math.abs(hex.col - avoidHex.col);
+                return distance >= minDistance;
+            });
+        }
+    }
+    
+    const totalHexes = availableHexes.length;
+    
+    let randomIndex;
+    if (useSeed && currentSeed) {
+        const rand = seededRandom(currentSeed, itemCounter + offset);
+        randomIndex = Math.floor(rand * totalHexes);
+    } else {
+        randomIndex = Math.floor(Math.random() * totalHexes);
+    }
+    
+    return availableHexes[randomIndex];
+}
+    
+// Игрок - используем offset 0
+const startHex = getStartPosition(0);
+itemCounter++;
+
+// Вычисляем среднее арифметическое и минимальную дистанцию
+const avgDistance = Math.floor((rows + cols) / 2) - 1;
+
+// Враг - используем offset 1, избегаем игрока на расстоянии avgDistance
+const enemyHex = getStartPosition(1, startHex, avgDistance);
+itemCounter++;
+    
     availableCells = [...availableCells, ...neighboringСells(startHex)];
     playerCells.push(startHex);
     playerLand(startHex);
-    enemyLand(playrsHex());
+    enemyLand(enemyHex);
 
     initMapControls();
 }
-function playrsHex(){
-    const playrHex = Math.floor(Math.random()*hexs.length);
-    const hex = hexs[playrHex];
-    return hex;
-}
 function playerLand(hex){
-    hex.id?.classList.remove("enemyGrass", "availableCell");
+    hex.id?.classList.remove("enemyGrass", "availableCell", "availableCellRed");
     hex.land = "player";
     hex.id?.classList.add("playrsGrass");
 }
@@ -158,6 +682,7 @@ function enemyLand(hex){
 function nextStep(){
     availableCells = [];
     playerCells = [];
+    enemyCells = [];
     ID.map.style.cursor = 'grab';
     energyPlus(3);
     hexs.forEach(hex => {
@@ -174,7 +699,15 @@ function nextStep(){
             }
         }
         if(hex.item == "void"){
-            const Wheat = Math.floor(Math.random()*49) == 0? true : false;
+            let water = 0;
+            const cells = neighboringСells(hex);
+            for(const cell of cells){
+                if(cell.land === "water"){
+                    water = 125;
+                    break;
+                }
+            }
+            const Wheat = Math.floor(Math.random()*(140-water)) == 0? true : false;
             if(Wheat){
                 hex.id.classList.add("wheat");
                 hex.item = "wheat";
@@ -182,6 +715,7 @@ function nextStep(){
         }
         if(hex.land == "player"){
             if(hex.item == "void"){
+                flyAction(hex, "1", "coin") 
                 finance(1);
             }
             playerCells.push(hex);
@@ -193,18 +727,18 @@ function nextStep(){
         if(hex.item == "house"){
             finance(5);
             if(food > 2){
-                food -= 2;
+                foodChange(-2);
             }else {
                 finance(-6);
             }
-            energyPlus(2);
+            energyPlus(3);
         }
         if(hex.flag == "new"){
             classFlag(hex, "old");
         } else if (hex.flag == "old"){
             classFlag(hex, "none");
         }
-        hex.id.classList.remove("availableCell");
+        hex.id.classList.remove("availableCell", "availableCellRed");
     })
     let cells;
     let next = false; 
@@ -220,11 +754,21 @@ function nextStep(){
     do {stepEnemy = cells[Math.floor(Math.random()*cells.length)];
     } while (stepEnemy && stepEnemy.land == "enemy" || !stepEnemy || stepEnemy.land == "water");
     enemyLand(stepEnemy);
-    enemyCells = [];
     raisingFlaf(stepEnemy, 0, "enemy");
 
-    
-    const actionBtns = [ID.actionFlag];
+    removeClassActionBtn();
+    if(playerCells.length < 1){
+        ID.gameEndText.textContent = "Поражение!"
+        ID.gameEndText.style.color = "red";
+        ID.step.disabled = true;
+    }else if(enemyCells.length < 1){
+        ID.gameEndText.textContent = "Победа!"
+        ID.gameEndText.style.color = "green";
+        ID.step.disabled = true;
+    }
+}
+function removeClassActionBtn(){
+    const actionBtns = [ID.actionFlag, ID.actionTree];
     actionBtns.forEach(btn => {
         btn.classList.remove("actionBtnTrue");
     })
@@ -304,31 +848,64 @@ if(hex.land == "player"){
     }
 } else if (seizTerr && hex.land == "enemy" && energy > 5){
     raisingFlaf(hex, -6, "player")
-} else if (seizTerr && hex.land == "grass" && energy > 2){
+} else if (seizTerr && hex.land == "grass" && energy > 2){ 
     raisingFlaf(hex, -3, "player");
 } 
 if(energy <= 0){
-    nextStep();
+    removeClassActionBtn()
 }
 }
-function raisingFlaf(hex, energy, who){
+function flyAction(hex, value, img){
+    const id = "fly"+hex.row+hex.col;
+    DOM.Create({Parent:"body", Id:id, Class:"flyCost"});
+    DOM.Create({Parent:id, Tag:"img", Class:"flyCostIMG", Src:IMG[img].src});
+    DOM.Create({Parent:id, Tag:"span", Class:"flyCostText", Text: value});
+            const object =  hex.id.getBoundingClientRect();
+            const objectX = object.left + Math.floor(object.width/2)-23;
+            const objectY = object.top + Math.floor(object.height/2)-13;
+            const dom = DOM.Id(id)
+            dom.style.top = objectY+"px";
+            dom.style.left = objectX+"px";
+            animationOnce(dom, "fly");
+            setTimeout(()=>dom.remove(), 1000);
+}
+function raisingFlaf(hex, en, who){
     const cells = neighboringСells(hex);
     for (const cell of cells) {
+        if(who == "player" && (cell.land == "grass" || cell.land == "enemy")){
+            cell.id.classList.add("availableCell");
+        }
         if (cell.land == who) {
-            energyChange(energy);
             if(who == "player"){
+                myLog(en)
+                energyChange(en);
                 playerLand(hex);
                 classFlag(hex, "new");
             } else if(who == "enemy"){
                 enemyLand(hex);
                 classFlag(hex, "old");
             }
-            break;
         }
     }
+    if(who == "player"){
+        playerCells.push(hex);
+        flyAction(hex, en, "energy")
+        if(energy < 6){
+        myLog(energy)
+        playerCells.forEach(cell => {
+            const cells2 = neighboringСells(cell);
+            cells2.forEach(cell2 => {
+                if(energy < 3 && cell2.land == "grass"){
+                    cell2.id.classList.add("availableCellRed");
+                } else if(energy < 6 && cell2.land == "enemy"){
+                    cell2.id.classList.add("availableCellRed");
+                }
+            })
+        })
+        }
+     }
 }
 function classFlag(hex, flag){
-    myLog(flag)
     hex.flag = flag;
     if(flag == "new" && hex.item == "void"){
         hex.id.classList.add("flag");
@@ -473,7 +1050,7 @@ function updateTransform() {
         // Новый масштаб
         const delta = e.deltaY > 0 ? 0.9 : 1.1;
         let newScale = scale * delta;
-        newScale = Math.min(Math.max(0.4, newScale), 2);
+        newScale = Math.min(Math.max(0.3, newScale), 2);
     
         // Новые координаты мыши относительно карты ПОСЛЕ зума
         const newMouseMapX = (mouseX - offsetX) / newScale;

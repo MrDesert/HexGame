@@ -37,7 +37,12 @@
         <script src="tools/HTML.js" onerror="this.onerror=null; const newScript = document.createElement('script'); newScript.src = 'https://mrdesert.github.io/Tools/HTML.js'; document.body.appendChild(newScript);"></script><!-- Локальный файл для релиза, сетевой для разработки -->
         <div id="preloaderID"><div id="preloaderCentr"><span id="loading"></span><span id="preloaderTextID">...</span></div></div>
         <div id="blurID" hidden><span id="continue">Продолжить</span></div>
-        <footer style="z-index: 4;">© MrDesert - v0.0.4</footer>
+        <div style="position: fixed; top: 10px; right: 10px; z-index: 1000; display: flex; gap: 5px;">
+    <button onclick="applySeed()">Ввести сид</button>
+    <button onclick="randomSeed()">Случайный сид</button>
+    <button onclick="copySeed()">Копировать сид</button>
+</div>
+        <footer style="z-index: 4;">© MrDesert - v0.0.5</footer>
         <script src="script.js"></script>
     </body>
 </html>

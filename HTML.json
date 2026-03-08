@@ -85,5 +85,23 @@
         },
 "edge-fog":{
     "Parent": "body"
-}
+},
+"gameEnd":{
+    "Parent": "body"
+}, 
+    "gameEndText":{
+        "Parent": "gameEnd",
+        "Tag":"span"
+    },
+"flyCost": {
+    "Parent": "body"
+},
+    "flyCostIMG": {
+        "Parent": "flyCost",
+        "Tag":"img"
+    },
+    "flyCostText": {
+        "Parent": "flyCost",
+        "Tag":"span"
+    }
 }
