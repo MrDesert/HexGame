@@ -679,11 +679,13 @@ function enemyLand(hex){
     hex.land = "enemy";
     hex.id?.classList.add("enemyGrass");
 }
+function shop(bool){
+    ID.shopWindow.hidden = !bool;
+}
 function nextStep(){
     availableCells = [];
     playerCells = [];
     enemyCells = [];
-    ID.map.style.cursor = 'grab';
     energyPlus(3);
     hexs.forEach(hex => {
             console.log(money)
@@ -870,6 +872,9 @@ function flyAction(hex, value, img){
             setTimeout(()=>dom.remove(), 1000);
 }
 function raisingFlaf(hex, en, who){
+    if(who == "player"){
+        energyChange(en);
+    }
     const cells = neighboringСells(hex);
     for (const cell of cells) {
         if(who == "player" && (cell.land == "grass" || cell.land == "enemy")){
@@ -877,8 +882,6 @@ function raisingFlaf(hex, en, who){
         }
         if (cell.land == who) {
             if(who == "player"){
-                myLog(en)
-                energyChange(en);
                 playerLand(hex);
                 classFlag(hex, "new");
             } else if(who == "enemy"){
@@ -891,7 +894,6 @@ function raisingFlaf(hex, en, who){
         playerCells.push(hex);
         flyAction(hex, en, "energy")
         if(energy < 6){
-        myLog(energy)
         playerCells.forEach(cell => {
             const cells2 = neighboringСells(cell);
             cells2.forEach(cell2 => {

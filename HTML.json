@@ -75,13 +75,13 @@
     "actionTree":{
         "Parent": "actionBtns",
         "Class": "actionBtn",
-        "OnClick": "plantTree(true)"
+        "OnClick": "shop(true)"
     },
         "actionTreeIMG":{
             "Parent": "actionTree",
             "Class": "actionBtnIMG",
             "Tag": "img",
-            "Src": "firBig"
+            "Src": "house"
         },
 "edge-fog":{
     "Parent": "body"
@@ -93,15 +93,250 @@
         "Parent": "gameEnd",
         "Tag":"span"
     },
-"flyCost": {
-    "Parent": "body"
+"shopWindow":{
+    "Parent": "body",
+    "Hidden":"true"
 },
-    "flyCostIMG": {
-        "Parent": "flyCost",
-        "Tag":"img"
+    "closeBtn":{
+        "Parent": "shopWindow",
+        "Tag": "span",
+        "Text": "X",
+        "OnClick": "shop(false)"
     },
-    "flyCostText": {
-        "Parent": "flyCost",
-        "Tag":"span"
-    }
+    "shopWindowCont":{
+        "Parent": "shopWindow"
+    },
+    "buyWheat":{
+        "Parent": "shopWindowCont",
+        "Class": "buyItem"
+    },
+        "buyWheatCost":{
+            "Parent": "buyWheat",
+            "Class": "buyItemCost"
+        },
+            "buyWheatCostCont":{
+                "Parent": "buyWheatCost",
+                "Class": "buyItemCostCont"
+            },
+                "buyWheatEnergyIMG":{
+                    "Parent": "buyWheatCostCont",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"energy"
+                },
+                "buyWheatEnergyText":{
+                    "Parent": "buyWheatCostCont",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "1"
+                },
+        "buyWheatIMG":{
+            "Parent": "buyWheat",
+            "Class": "buyItemIMG",
+            "Tag":"img",
+            "Src":"wheat"
+        },
+        "buyWheatProfit":{
+            "Parent": "buyWheat",
+            "Class": "buyItemProfit"
+        },
+            "buyWheatProfitCont":{
+                "Parent": "buyWheatProfit",
+                "Class": "buyItemCostCont"
+            },
+                "buyWheatProfitWoodText":{
+                    "Parent": "buyWheatProfitCont",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "Сбор +1"
+                },
+                "buyWheatProfitWoodIMG":{
+                    "Parent": "buyWheatProfitCont",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"food"
+                },
+        "buyWheatBtn":{
+            "Parent": "buyWheat",
+            "Class": "buyItemBtn",
+            "Tag":"button",
+            "Text": "Выбрать"
+        },
+    "buyFir":{
+        "Parent": "shopWindowCont",
+        "Class": "buyItem"
+    },
+        "buyFirCost":{
+            "Parent": "buyFir",
+            "Class": "buyItemCost"
+        },
+            "buyFirCostCont":{
+                "Parent": "buyFirCost",
+                "Class": "buyItemCostCont"
+            },
+                "buyFirEnergyIMG":{
+                    "Parent": "buyFirCostCont",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"energy"
+                },
+                "buyFirEnergyText":{
+                    "Parent": "buyFirCostCont",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "2"
+                },
+            "buyFirCostCont2":{
+                "Parent": "buyFirCost",
+                "Class": "buyItemCostCont"
+            },
+                "buyFirEnergyIMG2":{
+                    "Parent": "buyFirCostCont2",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"coin"
+                },
+                "buyFirEnergyText2":{
+                    "Parent": "buyFirCostCont2",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "10"
+                },
+        "buyFirIMG":{
+            "Parent": "buyFir",
+            "Class": "buyItemIMG",
+            "Tag":"img",
+            "Src":"firBig"
+        },
+        "buyFirProfit":{
+            "Parent": "buyFir",
+            "Class": "buyItemProfit"
+        },
+            "buyFirProfitCont":{
+                "Parent": "buyFirProfit",
+                "Class": "buyItemCostCont"
+            },
+                "buyFirProfitWoodText":{
+                    "Parent": "buyFirProfitCont",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "Рубка +5"
+                },
+                "buyFirProfitWoodIMG":{
+                    "Parent": "buyFirProfitCont",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"firewood"
+                },
+        "buyFirBtn":{
+            "Parent": "buyFir",
+            "Class": "buyItemBtn",
+            "Tag":"button",
+            "Text": "Выбрать",
+            "OnClick": "plantTree(true)"
+        },
+    "buyHouse":{
+        "Parent": "shopWindowCont",
+        "Class": "buyItem"
+    },
+        "buyHouseCost":{
+            "Parent": "buyHouse",
+            "Class": "buyItemCost"
+        },
+            "buyHouseCostCont":{
+                "Parent": "buyHouseCost",
+                "Class": "buyItemCostCont"
+            },
+                "buyHouseEnergyIMG":{
+                    "Parent": "buyHouseCostCont",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"energy"
+                },
+                "buyHouseEnergyText":{
+                    "Parent": "buyHouseCostCont",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "3"
+                },
+            "buyHouseCostCont2":{
+                "Parent": "buyHouseCost",
+                "Class": "buyItemCostCont"
+            },
+                "buyHouseEnergyIMG2":{
+                    "Parent": "buyHouseCostCont2",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"coin"
+                },
+                "buyHouseEnergyText2":{
+                    "Parent": "buyHouseCostCont2",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "30"
+                },
+            "buyHouseCostCont3":{
+                "Parent": "buyHouseCost",
+                "Class": "buyItemCostCont"
+            },
+                "buyHouseEnergyIMG3":{
+                    "Parent": "buyHouseCostCont3",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"firewood"
+                },
+                "buyHouseEnergyText3":{
+                    "Parent": "buyHouseCostCont3",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "10"
+                },
+        "buyHouseIMG":{
+            "Parent": "buyHouse",
+            "Class": "buyItemIMG",
+            "Tag":"img",
+            "Src":"house"
+        },
+        "buyHouseProfit":{
+            "Parent": "buyHouse",
+            "Class": "buyItemProfit"
+        },
+            "buyHouseProfitCont":{
+                "Parent": "buyHouseProfit",
+                "Class": "buyItemCostCont"
+            },
+                "buyHouseProfitWoodText":{
+                    "Parent": "buyHouseProfitCont",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "День +3"
+                },
+                "buyHouseProfitWoodIMG":{
+                    "Parent": "buyHouseProfitCont",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"energy"
+                },
+            "buyHouseProfitCont2":{
+                "Parent": "buyHouseProfit",
+                "Class": "buyItemCostCont"
+            },
+                "buyHouseProfitWoodText2":{
+                    "Parent": "buyHouseProfitCont2",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "-2"
+                },
+                "buyHouseProfitWoodIMG2":{
+                    "Parent": "buyHouseProfitCont2",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"food"
+                },
+        "buyHouseBtn":{
+            "Parent": "buyHouse",
+            "Class": "buyItemBtn",
+            "Tag":"button",
+            "Text": "Выбрать"
+        }
 }

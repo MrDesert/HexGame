@@ -217,7 +217,7 @@ body {
    padding-left: 7px;
    z-index: 50;
    height: 81px;
-   width: 260px;
+   width: 140px;
    bottom: 0px;
    left: 50%;
    transform: translateX(-50%);
@@ -243,6 +243,89 @@ body {
 .actionBtnIMG {
    height: 100%;
    width: 100%;
+}
+#shopWindow{
+   position: absolute;
+   z-index: 5;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   height: 200px;
+   width: 345px;
+   border: solid black 2px;
+   border-radius: 10px;
+   padding: 13px;
+   background-color: gray;
+}
+#shopWindowCont{
+   display: flex;
+   gap: 13px;
+   padding: 7px;
+}
+#closeBtn{
+   position: absolute;
+   right: 5px;
+   top: 1px;
+   font-weight: 600;
+   font-size: 20px;
+}
+.buyItem{
+   height: 185px;
+   width: 90px;
+   padding: 3px;
+   border: solid black 2px;
+   border-radius: 6px;
+   background-color: rgb(68, 68, 68);
+   box-shadow: 0px 0px 5px 2px ;
+}
+.buyItemIMG{
+   display: flex;
+   gap: 5px;
+   height: 80px;
+   width: 80px;
+   border: solid black 1px;
+   border-radius: 6px;
+   background-color: rgb(59, 59, 59);
+   margin-bottom: 3px;
+   padding: 4px;
+}
+.buyItemCost{
+   display: flex;
+   gap: 4px;
+   height: 20px;
+   width: 88px;
+   margin-bottom: 3px;
+}
+.buyItemCostCont{
+   display: flex;
+   padding-top: 2px;
+}
+.buyItemCostIMG{
+   height: 16px;
+   width: 13px;
+}
+.buyItemCostText{
+   font-weight: 600;
+   font-size: 15px;
+}
+.buyItemCostText2{
+   font-weight: 600;
+   font-size: 14px;
+}
+.buyItemProfit{
+   word-spacing: -6px;
+   word-wrap: break-word;
+   height: 35px;
+   width: 88px;
+   margin-bottom: 3px;
+}
+.buyItemBtn{
+   margin-left: 5px;
+   height: 25px;
+   width: 77px;
+   background-color: rgb(59, 59, 59);
+   border-radius: 10px;
+   font-weight: 600;
 }
 #body {
    background-color: rgb(0, 80, 0);
