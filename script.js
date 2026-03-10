@@ -1,6 +1,10 @@
 let DOMContentLoaded = false;
 let pausescreen = false;
 
+// Добавь в начало файла
+let activeHexMenu = null;
+let menuElement = null;
+
 const hexs = [];
 const mapHexs = [];
 let enemyCells = [];
@@ -15,7 +19,7 @@ let food = 0;
 let energy = 3;
 let energyMax = 3;
 let seizTerr = false;
-let plTree = false;
+let hexForBuy;
 
 function startGame() {
     if(sdkLoad && resurses && HTMLLoaded){
@@ -163,7 +167,6 @@ function createHexGrid(rows, cols, containerId) {
     const container = ID.map;
     container.style.width = cols*81+19 + 'px';
     container.style.height = rows*89+55 + 'px';
-    container.style.cursor = 'grab';
     itemCounter = 0; // Сбрасываем счетчик
     let typeWater;
     let randomTypeWater;
@@ -611,6 +614,11 @@ if(Item == "void"){
         hex.classList.add("wheat");
     }
 }
+hex.onclick = (e) => hexAction(Row, Col, e);
+hex.ontouchstart = (e) => {
+    e.preventDefault();
+    hexAction(Row, Col, e);
+};
             container.appendChild(hex);
             mapHexs[Row].push(hexs.length);
             hexs.push({row: Row, col: Col, land: Land, item: Item, flag: "none", id: document.getElementById("hex"+Row+Col)});
@@ -681,6 +689,27 @@ function enemyLand(hex){
 }
 function shop(bool){
     ID.shopWindow.hidden = !bool;
+    if(bool && energy >= 1){
+        ID.buyWheatBtn.disabled = false;
+        ID.buyWheat.classList.remove("buyItemDisable");
+    } else {
+        ID.buyWheatBtn.disabled = true;
+        ID.buyWheat.classList.add("buyItemDisable");
+    }
+    if(bool && energy >= 2 && money >= 10){
+        ID.buyFirBtn.disabled = false;
+        ID.buyFir.classList.remove("buyItemDisable");
+    } else {
+        ID.buyFirBtn.disabled = true;
+        ID.buyFir.classList.add("buyItemDisable");
+    }
+    if(bool && wood >= 10 && energy >= 3 && money >= 30){
+        ID.buyHouseBtn.disabled = false;
+        ID.buyHouse.classList.remove("buyItemDisable");
+    } else {
+        ID.buyHouseBtn.disabled = true;
+        ID.buyHouse.classList.add("buyItemDisable");
+    }
 }
 function nextStep(){
     availableCells = [];
@@ -717,7 +746,7 @@ function nextStep(){
         }
         if(hex.land == "player"){
             if(hex.item == "void"){
-                flyAction(hex, "1", "coin") 
+                flyAction(hex, "1", "coin", "green") 
                 finance(1);
             }
             playerCells.push(hex);
@@ -725,6 +754,7 @@ function nextStep(){
         }
         if(hex.land == "enemy"){
             enemyCells.push(hex)
+            myLog(enemyCells.length - " 2enemy")
         }
         if(hex.item == "house"){
             finance(5);
@@ -744,6 +774,7 @@ function nextStep(){
     })
     let cells;
     let next = false; 
+    myLog(enemyCells.length - " 1enemy")
     do {
         cells = neighboringСells(enemyCells[Math.floor(Math.random()*enemyCells.length)]);
         cells.forEach(cell =>{
@@ -759,6 +790,7 @@ function nextStep(){
     raisingFlaf(stepEnemy, 0, "enemy");
 
     removeClassActionBtn();
+    myLog(enemyCells.length - " 0enemy")
     if(playerCells.length < 1){
         ID.gameEndText.textContent = "Поражение!"
         ID.gameEndText.style.color = "red";
@@ -770,12 +802,11 @@ function nextStep(){
     }
 }
 function removeClassActionBtn(){
-    const actionBtns = [ID.actionFlag, ID.actionTree];
+    const actionBtns = [ID.actionFlag];
     actionBtns.forEach(btn => {
         btn.classList.remove("actionBtnTrue");
     })
     seizTerr = false;
-    plTree = false;
 }
 function energyPlus(value){
     if (energy < energyMax){
@@ -816,48 +847,158 @@ function neighboringСells(hex){
     })
     return result;
 }
-function hexAction(row, col){
-const hex = hexs[mapHexs[row][col]]
-if(hex.land == "player"){
-    if(plTree && hex.item == "tree" && energy > 1){
-        woodChange(5);
-        energyChange(-2);
-        classItem(hex, "void");
-    }else if(plTree && hex.item == "treeChild"){
-        if(money > 4 && energy > 0){
-            finance(-5);
-            energyChange(-1);
-            treeGrowth(hex, 3);
+
+function showHexMenu(hex, event) {
+    if(menuElement){close(); return}; // Удаляем старое меню по клику на другой hex
+
+    // Создаем контейнер меню
+    menuElement = document.createElement('div');
+    menuElement.className = 'hex-menu';
+    
+    // Получаем координаты мыши
+    const mouseX = event.clientX;
+    const mouseY = event.clientY;
+    
+    document.body.appendChild(menuElement); // Сначала добавляем в DOM чтобы измерить размер
+    
+    const items = []; // Наполняем пунктами в зависимости от типа клетки
+            
+    if (hex.land == "player") {
+        if (hex.item == "tree" && energy >= 2) {
+            items.push({ text: "🌳 Срубить (5 дерева, -2 энергии)", action: () => woodAction(hex) });
         }
-    }else if(hex.item == "void"){
-        if(wood > 9 && energy > 2 && money > 30){
-            woodChange(-10);
-            finance(-30);
-            energyMax += 3;
-            energyChange(-3);
-            classItem(hex, "house")
-        } else if(plTree && hex.item != "treeChild" && money > 9 && energy > 1) {
-            finance(-10);
-            energyChange(-2);
-            classItem(hex, "treeChild")
+        if (hex.item == "treeChild" && energy >= 1 && money >= 5) {
+            items.push({ text: "🌱 Полить (5 денег, -1 энергии)", action: () => waterTreeAction(hex) });
         }
-    } else if(hex.item == "wheat"){
-        if(energy > 0){
-            energyChange(-1);
-            foodChange(1);
-            classItem(hex, "void");
+        if (hex.item == "void") {
+            items.push({ text: "Установить...", action: () => shop(true) });
+            hexForBuy = hex;
+        }
+        if (hex.item == "wheat" && energy >= 1) {
+            items.push({ text: "🌾 Собрать (+1 еда)", action: () => harvestAction(hex) });
         }
     }
-} else if (seizTerr && hex.land == "enemy" && energy > 5){
-    raisingFlaf(hex, -6, "player")
-} else if (seizTerr && hex.land == "grass" && energy > 2){ 
-    raisingFlaf(hex, -3, "player");
-} 
-if(energy <= 0){
-    removeClassActionBtn()
+    
+    if ((hex.land == "grass" && energy >= 3) || (hex.land == "enemy" && energy >= 6)) {
+        const energ = hex.land == "enemy" ? -6 : -3; 
+        const cells = neighboringСells(hex);
+        for(const cell of cells){
+            if(cell.land == "player"){
+                items.push({ text: "⚔️ Захватить", action: () => raisingFlaf(hex, energ, "player")});
+                break;
+            }
+        }
+    }
+    
+    if (items.length === 0) {close(); return} // Если нет действий - не показываем меню
+    
+    // Создаем пункты меню
+    items.forEach(item => {
+        const btn = document.createElement('button');
+        btn.textContent = item.text;
+        btn.onclick = () => {
+
+            item.action();
+                        myLog("close")
+            close()
+        };
+        menuElement.appendChild(btn);
+    });
+    
+    // Кнопка закрытия
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = "❌ Закрыть";
+    closeBtn.onclick = () => {close()};
+    menuElement.appendChild(closeBtn);
+    
+    // Измеряем размер меню
+    const menuWidth = menuElement.offsetWidth;
+    const menuHeight = menuElement.offsetHeight;
+    
+    const spaceRight = window.innerWidth - mouseX; // Проверяем поместится ли справа
+    const spaceLeft = mouseX;
+    const spaceBottom = window.innerHeight - mouseY; // Проверяем поместится ли снизу
+    const spaceTop = mouseY;
+    
+    let left;
+    if (spaceRight >= menuWidth || spaceRight >= spaceLeft) { // Определяем позицию по горизонтали
+        left = mouseX; // Ставим справа
+    } else {
+        left = mouseX - menuWidth; // Ставим слева
+    }
+    
+    let top;
+    if (spaceBottom >= menuHeight || spaceBottom >= spaceTop) { // Определяем позицию по вертикали
+        top = mouseY; // Ставим снизу
+    } else {
+        top = mouseY - menuHeight; // Ставим сверху
+    }
+    
+    // Применяем позицию
+    menuElement.style.top = top + 'px';
+    menuElement.style.left = left + 'px';
+    menuElement.style.position = 'fixed'; // fixed вместо absolute
+
+    function close(){
+        menuElement.remove();
+        menuElement = null;
+    }
 }
+
+function hexAction(row, col, event) {
+    const hex = hexs[mapHexs[row][col]];
+    showHexMenu(hex, event);
+    if(energy <= 0){
+        removeClassActionBtn()
+    }
 }
-function flyAction(hex, value, img){
+function buyItem(item){
+    shop(false);
+    if(item == "house" && hexForBuy.land == "player"){
+        flyAction(hexForBuy, -10, "firewood", "red");
+        flyAction(hexForBuy, -30, "coin", "red");
+        flyAction(hexForBuy, -3, "energy", "red");
+        woodChange(-10);
+        finance(-30);
+        energyMax += 3;
+        energyChange(-3);
+        classItem(hexForBuy, "house")
+    }
+    if(item == "tree" && hexForBuy.land == "player"){
+        flyAction(hex, -10, "coin", "red");
+        flyAction(hex, -2, "energy", "red");
+        finance(-10);
+        energyChange(-2);
+        classItem(hexForBuy, "treeChild")
+    }
+    if(item == "wheat" && hexForBuy.land == "player"){
+        flyAction(hexForBuy, -1, "energy", "red");
+        energyChange(-1);
+        classItem(hexForBuy, "wheat")
+    }
+}
+function woodAction(hex){
+    flyAction(hex, 5, "firewood", "green");
+    flyAction(hex, -2, "energy", "red");
+    woodChange(5);
+    energyChange(-2);
+    classItem(hex, "void");
+}
+function waterTreeAction(hex){
+    flyAction(hex, -5, "coin", "red");
+    flyAction(hex, -1, "energy", "red");
+    finance(-5);
+    energyChange(-1);
+    treeGrowth(hex, 3);
+}
+function harvestAction(hex){
+    flyAction(hex, -1, "energy", "red");
+    flyAction(hex, 1, "food", "green");
+    energyChange(-1);
+    foodChange(1);
+    classItem(hex, "void");
+}
+function flyAction(hex, value, img, color){
     const id = "fly"+hex.row+hex.col;
     DOM.Create({Parent:"body", Id:id, Class:"flyCost"});
     DOM.Create({Parent:id, Tag:"img", Class:"flyCostIMG", Src:IMG[img].src});
@@ -868,6 +1009,7 @@ function flyAction(hex, value, img){
             const dom = DOM.Id(id)
             dom.style.top = objectY+"px";
             dom.style.left = objectX+"px";
+            dom.style.color = color
             animationOnce(dom, "fly");
             setTimeout(()=>dom.remove(), 1000);
 }
@@ -892,7 +1034,7 @@ function raisingFlaf(hex, en, who){
     }
     if(who == "player"){
         playerCells.push(hex);
-        flyAction(hex, en, "energy")
+        flyAction(hex, en, "energy", "red")
         if(energy < 6){
         playerCells.forEach(cell => {
             const cells2 = neighboringСells(cell);
@@ -923,27 +1065,9 @@ function classFlag(hex, flag){
         hex.id.classList.remove("flag", "flag_Item", "flagOld");
     }
 }
-function plantTree(bool){
-    plTree = bool;
-    if(bool){
-        seizureTerritory(false);
-        ID.actionTree.classList.add("actionBtnTrue");
-        playerCells.forEach(hex => {
-            if(hex.item == "void"){
-                hex.id.classList.add("availableTree");
-            }
-        })
-    }else{
-        ID.actionTree.classList.remove("actionBtnTrue");
-        playerCells.forEach(hex => {
-            hex.id.classList.remove("availableTree");
-        })
-    }
-}
 function seizureTerritory(bool) {
     seizTerr = bool;
     if(bool){
-        plantTree(false);
     availableCells.forEach(hex => {
         let bool2 = false;
         const cells = neighboringСells(hex);
@@ -1071,7 +1195,6 @@ function updateTransform() {
         isDragging = true;
         startX = e.clientX - offsetX;
         startY = e.clientY - offsetY;
-        map.style.cursor = 'grabbing';
     });
     
     // Движение мыши
@@ -1094,7 +1217,6 @@ document.addEventListener('mousemove', (e) => {
     // Конец перетаскивания
     document.addEventListener('mouseup', () => {
         isDragging = false;
-        map.style.cursor = 'grab';
     });
     
     // Двойной клик - сброс

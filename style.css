@@ -218,9 +218,9 @@ body {
    z-index: 50;
    height: 81px;
    width: 140px;
-   bottom: 0px;
-   left: 50%;
-   transform: translateX(-50%);
+   bottom: 50%;
+   left: 0px;
+   transform: translateY(-50%);
 }
 .actionBtn {
    align-self: flex-end; /* Этот элемент прижмется к низу */
@@ -244,6 +244,33 @@ body {
    height: 100%;
    width: 100%;
 }
+.hex-menu {
+    position: fixed;
+    background: rgba(0,0,0,0.95);
+    border: 2px solid #666;
+    border-radius: 8px;
+    padding: 5px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 200px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+.hex-menu button {
+    padding: 10px;
+    background: #333;
+    color: white;
+    border: 1px solid #666;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: left;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+.hex-menu button:hover {
+    background: #444;
+}
 #shopWindow{
    position: absolute;
    z-index: 5;
@@ -263,11 +290,23 @@ body {
    padding: 7px;
 }
 #closeBtn{
+   line-height: 0.7; /* или меньше, например 0.8 */
    position: absolute;
    right: 5px;
-   top: 1px;
+   top: 2px;
+   padding: 3px 3px 1px 2px;
    font-weight: 600;
    font-size: 20px;
+   border: solid 1px rgba(0,0,0,0);
+}
+#closeBtn:hover{
+   border: solid 1px black;
+   border-radius: 3px;
+}
+#closeBtn:active{
+   border: solid 1px black;
+   border-radius: 3px;
+   box-shadow: inset 0px 0px 1px 1px black;
 }
 .buyItem{
    height: 185px;
@@ -277,6 +316,10 @@ body {
    border-radius: 6px;
    background-color: rgb(68, 68, 68);
    box-shadow: 0px 0px 5px 2px ;
+}
+.buyItemDisable{
+   filter: grayscale(30%);
+   opacity: 50%;
 }
 .buyItemIMG{
    display: flex;
@@ -337,6 +380,12 @@ body {
    top: 0px;
    left: 0px;
 }
+#map:hover {
+   cursor: grab;
+}
+#map:active {
+   cursor: grabbing;
+}
 #edge-fog {
    position: absolute;
    z-index: 20;
@@ -360,7 +409,11 @@ body {
    background-position: center;
 }
 .hex:hover{
+   cursor: pointer;
    box-shadow: inset 0 0 0 999px rgba(255, 255, 255, 0.1);
+}
+.hex:active {
+   cursor: grabbing;
 }
 .grass{
    background-color: olive;
@@ -482,7 +535,7 @@ body {
 }
 .flyCostText{
    font-size: 24px;
-   color: rgb(173, 0, 0);
+   text-shadow: black 1px 1px 2px ;
    font-weight: 600;
 }
 .sflyCostIMG{
@@ -490,7 +543,7 @@ body {
    object-fit: contain;
 }
 .fly{
-   animation: fly 0.6s 1 alternate;
+   animation: fly 0.7s 1 alternate;
       /* Оптимизация для GPU */
    will-change: transform;
    backface-visibility: hidden;
@@ -499,7 +552,7 @@ body {
 @keyframes fly {
    0% {opacity: 100%; transform: translateY(0px);}
    25% {opacity: 100%; transform: translateY(-20px);}
-   50% {opacity: 70%; transform: translateY(-33px);}
-   75% {opacity: 40%; transform: translateY(-42px);}
-   100% {opacity: 0%; transform: translateY(-50px);}
+   50% {opacity: 80%; transform: translateY(-37px);}
+   75% {opacity: 50%; transform: translateY(-50px);}
+   100% {opacity: 0%; transform: translateY(-60px);}
 }

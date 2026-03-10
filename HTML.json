@@ -72,17 +72,6 @@
             "Tag": "img",
             "Src": "flag"
         },
-    "actionTree":{
-        "Parent": "actionBtns",
-        "Class": "actionBtn",
-        "OnClick": "shop(true)"
-    },
-        "actionTreeIMG":{
-            "Parent": "actionTree",
-            "Class": "actionBtnIMG",
-            "Tag": "img",
-            "Src": "house"
-        },
 "edge-fog":{
     "Parent": "body"
 },
@@ -108,7 +97,7 @@
     },
     "buyWheat":{
         "Parent": "shopWindowCont",
-        "Class": "buyItem"
+        "Class": "buyItem buyItemDisable"
     },
         "buyWheatCost":{
             "Parent": "buyWheat",
@@ -160,11 +149,12 @@
             "Parent": "buyWheat",
             "Class": "buyItemBtn",
             "Tag":"button",
-            "Text": "Выбрать"
+            "Text": "Купить",
+            "OnClick": "buyItem('wheat')"
         },
     "buyFir":{
         "Parent": "shopWindowCont",
-        "Class": "buyItem"
+        "Class": "buyItem buyItemDisable"
     },
         "buyFirCost":{
             "Parent": "buyFir",
@@ -237,7 +227,7 @@
         },
     "buyHouse":{
         "Parent": "shopWindowCont",
-        "Class": "buyItem"
+        "Class": "buyItem buyItemDisable"
     },
         "buyHouseCost":{
             "Parent": "buyHouse",
@@ -337,6 +327,7 @@
             "Parent": "buyHouse",
             "Class": "buyItemBtn",
             "Tag":"button",
-            "Text": "Выбрать"
+            "Text": "Выбрать",
+            "OnClick": "buyItem('house')"
         }
 }
