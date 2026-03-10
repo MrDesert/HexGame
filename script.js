@@ -13,8 +13,8 @@ let availableCells = [];
 let currentSeed = Math.floor(Math.random() * 1000000);
 let useSeed = false;
 let itemCounter = 0;
-let money = 0;
-let wood = 0;
+let money = 90;
+let wood = 30;
 let food = 0;
 let energy = 3;
 let energyMax = 3;
@@ -568,7 +568,15 @@ const isWater = waterCells.some(([r, c]) => r === Row && c === Col);
 if (isWater) {
     Land = "water";
     Item = "none";
-    hex.className = 'hex water';
+    if(typeWater == "swamp"){
+        hex.className = 'hex waterSwamp';
+    }else if(typeWater == "sea"){
+        hex.className = 'hex waterSea';
+    }else if(typeWater == "lake"){
+        hex.className = 'hex waterLake';
+    }else{
+        hex.className = 'hex water';
+    }
 } else {
     hex.className = 'hex grass';
 }
@@ -689,7 +697,8 @@ function enemyLand(hex){
 }
 function shop(bool){
     ID.shopWindow.hidden = !bool;
-    if(bool && energy >= 1){
+    const find = searchNeigborCell(hexForBuy, "water");
+    if(bool && energy >= 1 && find){
         ID.buyWheatBtn.disabled = false;
         ID.buyWheat.classList.remove("buyItemDisable");
     } else {
@@ -754,7 +763,6 @@ function nextStep(){
         }
         if(hex.land == "enemy"){
             enemyCells.push(hex)
-            myLog(enemyCells.length - " 2enemy")
         }
         if(hex.item == "house"){
             finance(5);
@@ -772,9 +780,9 @@ function nextStep(){
         }
         hex.id.classList.remove("availableCell", "availableCellRed");
     })
+    if(enemyCells.length > 0){
     let cells;
     let next = false; 
-    myLog(enemyCells.length - " 1enemy")
     do {
         cells = neighboringСells(enemyCells[Math.floor(Math.random()*enemyCells.length)]);
         cells.forEach(cell =>{
@@ -788,9 +796,9 @@ function nextStep(){
     } while (stepEnemy && stepEnemy.land == "enemy" || !stepEnemy || stepEnemy.land == "water");
     enemyLand(stepEnemy);
     raisingFlaf(stepEnemy, 0, "enemy");
-
+    }
     removeClassActionBtn();
-    myLog(enemyCells.length - " 0enemy")
+    myLog(enemyCells.length + " 0enemy")
     if(playerCells.length < 1){
         ID.gameEndText.textContent = "Поражение!"
         ID.gameEndText.style.color = "red";
@@ -881,13 +889,8 @@ function showHexMenu(hex, event) {
     
     if ((hex.land == "grass" && energy >= 3) || (hex.land == "enemy" && energy >= 6)) {
         const energ = hex.land == "enemy" ? -6 : -3; 
-        const cells = neighboringСells(hex);
-        for(const cell of cells){
-            if(cell.land == "player"){
-                items.push({ text: "⚔️ Захватить", action: () => raisingFlaf(hex, energ, "player")});
-                break;
-            }
-        }
+        const find = searchNeigborCell(hex, "player")
+        if(find) items.push({ text: "⚔️ Захватить", action: () => raisingFlaf(hex, energ, "player")});
     }
     
     if (items.length === 0) {close(); return} // Если нет действий - не показываем меню
@@ -899,7 +902,6 @@ function showHexMenu(hex, event) {
         btn.onclick = () => {
 
             item.action();
-                        myLog("close")
             close()
         };
         menuElement.appendChild(btn);
@@ -945,6 +947,15 @@ function showHexMenu(hex, event) {
     }
 }
 
+function searchNeigborCell(hex, filter){
+    const cells = neighboringСells(hex);
+    for(const cell of cells){
+        if(cell.land == filter){
+            return true;
+        }
+    }
+}
+
 function hexAction(row, col, event) {
     const hex = hexs[mapHexs[row][col]];
     showHexMenu(hex, event);
@@ -965,8 +976,8 @@ function buyItem(item){
         classItem(hexForBuy, "house")
     }
     if(item == "tree" && hexForBuy.land == "player"){
-        flyAction(hex, -10, "coin", "red");
-        flyAction(hex, -2, "energy", "red");
+        flyAction(hexForBuy, -10, "coin", "red");
+        flyAction(hexForBuy, -2, "energy", "red");
         finance(-10);
         energyChange(-2);
         classItem(hexForBuy, "treeChild")
@@ -1047,6 +1058,8 @@ function raisingFlaf(hex, en, who){
             })
         })
         }
+     } else if(who == "enemy"){
+        enemyCells.push(hex);
      }
 }
 function classFlag(hex, flag){

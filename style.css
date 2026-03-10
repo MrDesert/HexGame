@@ -421,6 +421,15 @@ body {
 .water{
    background-color: rgb(18, 18, 143);
 }
+.waterSwamp{
+   background-color: rgb(0, 99, 38);
+}
+.waterSea{
+   background-color: rgb(8, 85, 156);
+}
+.waterLake{
+   background-color: rgb(4, 4, 110);
+}
 .playrsGrass{
    background-color: green;
 }

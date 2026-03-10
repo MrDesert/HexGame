@@ -223,7 +223,7 @@
             "Class": "buyItemBtn",
             "Tag":"button",
             "Text": "Выбрать",
-            "OnClick": "plantTree(true)"
+            "OnClick": "buyItem('tree')"
         },
     "buyHouse":{
         "Parent": "shopWindowCont",
