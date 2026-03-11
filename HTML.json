@@ -61,17 +61,6 @@
 "actionBtns":{
     "Parent": "body"
 },
-    "actionFlag":{
-        "Parent": "actionBtns",
-        "Class": "actionBtn",
-        "OnClick": "seizureTerritory(true)"
-    },
-        "actionFlagIMG":{
-            "Parent": "actionFlag",
-            "Class": "actionBtnIMG",
-            "Tag": "img",
-            "Src": "flag"
-        },
 "edge-fog":{
     "Parent": "body"
 },
@@ -418,5 +407,94 @@
             "Tag":"button",
             "Text": "Выбрать",
             "OnClick": "buyItem('waterWell')"
+        },
+    "buyWarrior":{
+        "Parent": "shopWindowCont",
+        "Class": "buyItem buyItemDisable"
+    },
+        "buyWarriorCost":{
+            "Parent": "buyWarrior",
+            "Class": "buyItemCost"
+        },
+            "buyWarriorCostCont":{
+                "Parent": "buyWarriorCost",
+                "Class": "buyItemCostCont"
+            },
+                "buyWarriorEnergyIMG":{
+                    "Parent": "buyWarriorCostCont",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"energy"
+                },
+                "buyWarriorEnergyText":{
+                    "Parent": "buyWarriorCostCont",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "3"
+                },
+            "buyWarriorCostCont2":{
+                "Parent": "buyWarriorCost",
+                "Class": "buyItemCostCont"
+            },
+                "buyWarriorEnergyIMG2":{
+                    "Parent": "buyWarriorCostCont2",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"coin"
+                },
+                "buyWarriorEnergyText2":{
+                    "Parent": "buyWarriorCostCont2",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "100"
+                },
+        "buyWarriorIMG":{
+            "Parent": "buyWarrior",
+            "Class": "buyItemIMG",
+            "Tag":"img",
+            "Src":"warrior"
+        },
+        "buyWarriorProfit":{
+            "Parent": "buyWarrior",
+            "Class": "buyItemProfit"
+        },
+            "buyWarriorProfitCont":{
+                "Parent": "buyWarriorProfit",
+                "Class": "buyItemCostCont"
+            },
+                "buyWarriorProfitWoodText":{
+                    "Parent": "buyWarriorProfitCont",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "День +3"
+                },
+                "buyWarriorProfitWoodIMG":{
+                    "Parent": "buyWarriorProfitCont",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"energy"
+                },
+            "buyWarriorProfitCont2":{
+                "Parent": "buyWarriorProfit",
+                "Class": "buyItemCostCont"
+            },
+                "buyWarriorProfitWoodText2":{
+                    "Parent": "buyWarriorProfitCont2",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "-2"
+                },
+                "buyWarriorProfitWoodIMG2":{
+                    "Parent": "buyWarriorProfitCont2",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"food"
+                },
+        "buyWarriorBtn":{
+            "Parent": "buyWarrior",
+            "Class": "buyItemBtn",
+            "Tag":"button",
+            "Text": "Выбрать",
+            "OnClick": "buyItem('warrior')"
         }
 }

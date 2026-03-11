@@ -210,40 +210,6 @@ body {
 .grayScale{
    filter: grayscale(60%);
 }
-#actionBtns {
-   display: flex;
-   gap: 5px;
-   position: absolute;
-   padding-left: 7px;
-   z-index: 50;
-   height: 81px;
-   width: 140px;
-   bottom: 50%;
-   left: 0px;
-   transform: translateY(-50%);
-}
-.actionBtn {
-   align-self: flex-end; /* Этот элемент прижмется к низу */
-   position: relative;
-   bottom: 0px;
-   height: 60px;
-   width: 60px;
-   border: solid black 1px;
-   background-color: rgba(104, 104, 104, 0.3);
-   filter: grayscale(100%) contrast(1.4);
-}
-.actionBtn:hover {
-   transform: scale(1.2) translateY(-8px);
-}
-.actionBtnTrue {
-   transform: scale(1.2) translateY(-9px);
-   border: solid red 2px;
-   filter: grayscale(40%) contrast(1.4);
-}
-.actionBtnIMG {
-   height: 100%;
-   width: 100%;
-}
 .hex-menu {
     position: fixed;
     background: rgba(0,0,0,0.95);
@@ -277,15 +243,18 @@ body {
    top: 50%;
    left: 50%;
    transform: translate(-50%, -50%);
-   height: 200px;
-   width: 450px;
+   height: 230px;
+   width: 80%;
+   min-width: 355px;
    border: solid black 2px;
    border-radius: 10px;
    padding: 13px;
    background-color: gray;
+   overflow: auto ;
 }
 #shopWindowCont{
    display: flex;
+   flex-wrap: wrap;
    gap: 13px;
    padding: 7px;
 }
@@ -461,6 +430,9 @@ body {
 .waterWell{
    background-image: url("img/waterWell.png");
 }
+.warrior{
+   background-image: url("img/warrior.png");
+}
 .flag{
    background-image: url("img/flag.png");
    background-size: 90%;
@@ -495,16 +467,6 @@ body {
    background-image: url("img/flag.png");
    filter: brightness(100%) contrast(200%);
    cursor: pointer;
-}
-.availableCellRed{
-   filter: grayscale(20%);
-}
-.availableCellRed::after{
-   content: '';
-   width: 100%;
-   height: 100%;
-   position: absolute;
-   background-color: rgba(82, 0, 0, 0.35);
 }
 .availableTree{
    filter: brightness(100%) contrast(200%);

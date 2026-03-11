@@ -13,12 +13,12 @@ let availableCells = [];
 let currentSeed = Math.floor(Math.random() * 1000000);
 let useSeed = false;
 let itemCounter = 0;
-let money = 0;
+let money = 100;
 let wood = 0;
 let food = 0;
 let energy = 3;
 let energyMax = 3;
-let seizTerr = false;
+let warriorStep;
 let hexForBuy;
 
 function startGame() {
@@ -155,7 +155,7 @@ if (useSeed && currentSeed) {
     const cols = Math.ceil(window.innerWidth/ 85)+1;
     const rows = Math.ceil(window.innerHeight/ 100)+1;
     createHexGrid(rows, cols, 'map');
-}ы
+}
 }
 
 function seededRandom(seed, index) {
@@ -679,15 +679,15 @@ const avgDistance = Math.floor((rows + cols) / 2) - 1;
 const enemyHex = getStartPosition(1, startHex, avgDistance);
 itemCounter++;
     
-    availableCells = [...availableCells, ...neighboringСells(startHex)];
     playerCells.push(startHex);
     playerLand(startHex);
     enemyLand(enemyHex);
-
+    seizureTerritory(true);
     initMapControls();
 }
 function playerLand(hex){
-    hex.id?.classList.remove("enemyGrass", "availableCell", "availableCellRed");
+    availableCells = [...availableCells, ...neighboringСells(hex)];
+    hex.id?.classList.remove("enemyGrass", "availableCell");
     hex.land = "player";
     hex.id?.classList.add("playrsGrass");
 }
@@ -727,6 +727,13 @@ function shop(bool){
         ID.buyWaterWellBtn.disabled = true;
         ID.buyWaterWell.classList.add("buyItemDisable");
     }
+    if(bool && energy >= 3 && money >= 100){
+        ID.buyWarriorBtn.disabled = false;
+        ID.buyWarrior.classList.remove("buyItemDisable");
+    } else {
+        ID.buyWarriorBtn.disabled = true;
+        ID.buyWarrior.classList.add("buyItemDisable");
+    }
 }
 function nextStep(){
     availableCells = [];
@@ -735,58 +742,40 @@ function nextStep(){
     energyPlus(3);
     hexs.forEach(hex => {
             console.log(money)
-        if(hex.item == "tree"){
+        if(hex.item == "warrior"){
+            finance(-10);
+            foodChange(-1);
+            hex.warriorStep = 1;
+        }else if(hex.item == "tree"){
             newTreeChild(hex, 25)
             if(Math.floor(Math.random()*10) == 0){
                 classItem(hex, "treeMushrooms");
             }
-        }
-        if(hex.item == "treeMushrooms"){
+        } else if(hex.item == "treeMushrooms"){
             const cells = neighboringСells(hex);
             cells.forEach(cell =>{
                 if(cell.item == "tree" && Math.floor(Math.random()*3) == 0){
                     classItem(cell, "treeMushrooms");
                 }
             })
-        }
-        if(hex.item == "treeChild"){treeGrowth(hex, 30)}
-        if(hex.item == "wheatSeed"){
-             if(Math.floor(Math.random()*2) == 0){
+        }else if(hex.item == "treeChild"){treeGrowth(hex, 30)
+        }else if(hex.item == "wheatSeed" && Math.floor(Math.random()*2) == 0){
                 classItem(hex, "wheat");
-             }
-        }
-        if(hex.item == "void" || hex.item == "wheat"){
+        }else if(hex.item == "void" || hex.item == "wheat"){
             if(Math.floor(Math.random()*2) == 0){
                 newTreeChild(hex, 1500);
             }
-        }
-        if(hex.item == "void"){
+        }else if(hex.item == "void"){
             let water = 0;
             const cells = neighboringСells(hex);
             for(const cell of cells){
-                if(cell.land === "water"){
-                    water = 125;
-                    break;
-                }
+                if(cell.land === "water"){water = 125; break}
             }
-            const Wheat = Math.floor(Math.random()*(140-water)) == 0? true : false;
-            if(Wheat){
+            if(Math.floor(Math.random()*(140-water)) == 0){
                 hex.id.classList.add("wheat");
                 hex.item = "wheat";
             }
-        }
-        if(hex.land == "player"){
-            if(hex.item == "void"){
-                flyAction(hex, "1", "coin", "green") 
-                finance(1);
-            }
-            playerCells.push(hex);
-            availableCells = [...availableCells, ...neighboringСells(hex)];
-        }
-        if(hex.land == "enemy"){
-            enemyCells.push(hex)
-        }
-        if(hex.item == "house"){
+        }else if(hex.item == "house"){
             if(food < 2){
                 classItem(hex, "houseOld")
                 energyMax -= 3;
@@ -799,12 +788,19 @@ function nextStep(){
                 energyPlus(3);
             }
         }
-        if(hex.flag == "new"){
-            classFlag(hex, "old");
-        } else if (hex.flag == "old"){
-            classFlag(hex, "none");
+        if(hex.land == "player"){
+            if(hex.item == "void"){
+                flyAction(hex, "1", "coin", "green") 
+                finance(1);
+            }
+            playerCells.push(hex);
+            availableCells = [...availableCells, ...neighboringСells(hex)];
+        }else if(hex.land == "enemy"){
+            enemyCells.push(hex)
         }
-        hex.id.classList.remove("availableCell", "availableCellRed");
+        if(hex.flag == "new"){classFlag(hex, "old")} 
+        else if (hex.flag == "old"){classFlag(hex, "none")}
+        hex.id.classList.remove("availableCell");
     })
     if(enemyCells.length > 0){
     let cells;
@@ -812,9 +808,7 @@ function nextStep(){
     do {
         cells = neighboringСells(enemyCells[Math.floor(Math.random()*enemyCells.length)]);
         cells.forEach(cell =>{
-            if(cell.land == "player" || cell.land == "grass"){
-                next = true;
-            };
+            if(cell.land == "player" || cell.land == "grass"){next = true};
         })
     } while (!next);
     let stepEnemy;
@@ -823,23 +817,14 @@ function nextStep(){
     enemyLand(stepEnemy);
     raisingFlaf(stepEnemy, 0, "enemy");
     }
-    removeClassActionBtn();
-    if(playerCells.length < 1){
-        ID.gameEndText.textContent = "Поражение!"
-        ID.gameEndText.style.color = "red";
-        ID.step.disabled = true;
-    }else if(enemyCells.length < 1){
-        ID.gameEndText.textContent = "Победа!"
-        ID.gameEndText.style.color = "green";
-        ID.step.disabled = true;
-    }
+    if(playerCells.length < 1){windowGameEnd("Поражение!", "red")}
+    else if(enemyCells.length < 1){windowGameEnd("Победа!", "green")}
+    seizureTerritory(true);
 }
-function removeClassActionBtn(){
-    const actionBtns = [ID.actionFlag];
-    actionBtns.forEach(btn => {
-        btn.classList.remove("actionBtnTrue");
-    })
-    seizTerr = false;
+function windowGameEnd(text, color){
+    ID.gameEndText.textContent = text;
+    ID.gameEndText.style.color = color;
+    ID.step.disabled = true;
 }
 function energyPlus(value){
     if (energy < energyMax){
@@ -865,7 +850,7 @@ function newTreeChild(hex, chance){
         })
 }
 function classItem(hex, item){
-        hex.id.classList.remove("tree", "treeChild", "treeMushrooms", "wheat", "wheatSeed", "house", "houseOld", "waterWell", "void");
+        hex.id.classList.remove("tree", "treeChild", "treeMushrooms", "wheat", "wheatSeed", "house", "houseOld", "waterWell", "void", "warrior");
         hex.id.classList.add(item);
         hex.item = item;
 }
@@ -880,7 +865,53 @@ function neighboringСells(hex){
     })
     return result;
 }
-
+function searchNeigborCell(hex, type, filter){
+    const cells = neighboringСells(hex);
+    if(type == "land"){
+        for(const cell of cells){
+            if(cell.land == filter){
+                return true;
+            }
+        }
+    } else if(type == "item"){
+        for(const cell of cells){
+            if(cell.item == filter){
+                return true;
+            }
+        }
+    }
+}
+function getCellsInRadius(centerHex, radius, filterType = null) {
+    const result = [];
+    const visited = new Set();
+    const queue = [{hex: centerHex, dist: 0}];
+    
+    while (queue.length > 0) {
+        const {hex, dist} = queue.shift();
+        const key = `${hex.row},${hex.col}`;
+        
+        if (visited.has(key)) continue;
+        visited.add(key);
+        
+        // Добавляем все клетки кроме центральной (dist > 0)
+        if (dist > 0 && dist <= radius) {
+            // Применяем фильтр если нужен
+            if (!filterType || hex.land === filterType || hex.item === filterType) {
+                result.push(hex);
+            }
+        }
+        
+        if (dist < radius) {
+            const neighbors = neighboringСells(hex);
+            for (const neighbor of neighbors) {
+                if (!visited.has(`${neighbor.row},${neighbor.col}`)) {
+                    queue.push({hex: neighbor, dist: dist + 1});
+                }
+            }
+        }
+    }
+    return result;
+}
 function showHexMenu(hex, event) {
     if(menuElement){close(); return}; // Удаляем старое меню по клику на другой hex
 
@@ -922,12 +953,14 @@ function showHexMenu(hex, event) {
         if (hex.item == "houseOld" && energy >= 2){
             items.push({ text: "Снести (+10 монет, 2 энергии)", action: () => demolishHouse(hex)});
         }
+        if (hex.item == "warrior" && hex.warriorStep > 0){
+            items.push({ text: "⚔️ Захватить", action: () => warriorAction(hex)});
+        }
     }
     
-    if ((hex.land == "grass" && energy >= 3) || (hex.land == "enemy" && energy >= 6)) {
-        const energ = hex.land == "enemy" ? -6 : -3; 
+    if (hex.land == "grass" && energy >= 3) {
         const find = searchNeigborCell(hex, "land", "player")
-        if(find) items.push({ text: "⚔️ Захватить", action: () => raisingFlaf(hex, energ, "player")});
+        if(find) items.push({ text: "⚔️ Захватить", action: () => raisingFlaf(hex, -3, "player")});
     }
     
     if (items.length === 0) {close(); return} // Если нет действий - не показываем меню
@@ -984,29 +1017,22 @@ function showHexMenu(hex, event) {
     }
 }
 
-function searchNeigborCell(hex, type, filter){
-    const cells = neighboringСells(hex);
-    if(type == "land"){
-        for(const cell of cells){
-            if(cell.land == filter){
-                return true;
-            }
-        }
-    } else if(type == "item"){
-        for(const cell of cells){
-            if(cell.item == filter){
-                return true;
-            }
-        }
-    }
-}
-
 function hexAction(row, col, event) {
     const hex = hexs[mapHexs[row][col]];
+    if(hex.availableWarrior){
+        playerLand(hex);
+        classItem(hex.availableWarrior, "void")
+        classItem(hex, "warrior")
+        hex.availableWarrior.warriorStep -= 1;
+        const cells = neighboringСells(hex.availableWarrior);
+        cells.forEach(cell => {
+                    myLog(cell)
+            cell.id.classList.remove("availableCell");
+            cell.availableWarrior = null;
+        })
+    } else {
     showHexMenu(hex, event);
-    if(energy <= 0){
-        removeClassActionBtn()
-    }
+}
 }
 function buyItem(item){
     shop(false);
@@ -1040,6 +1066,14 @@ function buyItem(item){
         woodChange(-5);
         finance(-15);
         classItem(hexForBuy, "waterWell")
+    }
+    if(item == "warrior" && hexForBuy.land == "player"){
+        flyAction(hexForBuy, -100, "coin", "red");
+        flyAction(hexForBuy, -3, "energy", "red");
+        energyChange(-3);
+        finance(-100);
+        classItem(hexForBuy, "warrior");
+        hexForBuy.warriorStep = 1;
     }
 }
 function woodAction(hex){
@@ -1091,6 +1125,17 @@ function demolishHouse(hex){
     finance(10);
     classItem(hex, "void");
 }
+function warriorAction(hex){
+    const cells2 = getCellsInRadius(hex, 2);
+    cells2.forEach(cell => {
+            myLog("E")
+        const bool = searchNeigborCell(cell, "land", "player");
+        if(bool){
+            cell.id.classList.add("availableCell");
+            cell.availableWarrior = hex;
+        }
+    })
+}
 function flyAction(hex, value, img, color){
     const id = "fly"+hex.row+hex.col;
     DOM.Create({Parent:"body", Id:id, Class:"flyCost"});
@@ -1127,19 +1172,8 @@ function raisingFlaf(hex, en, who){
     }
     if(who == "player"){
         playerCells.push(hex);
-        flyAction(hex, en, "energy", "red")
-        if(energy < 6){
-        playerCells.forEach(cell => {
-            const cells2 = neighboringСells(cell);
-            cells2.forEach(cell2 => {
-                if(energy < 3 && cell2.land == "grass"){
-                    cell2.id.classList.add("availableCellRed");
-                } else if(energy < 6 && cell2.land == "enemy"){
-                    cell2.id.classList.add("availableCellRed");
-                }
-            })
-        })
-        }
+        flyAction(hex, en, "energy", "red");
+        removeAvailableCell();
      } else if(who == "enemy"){
         enemyCells.push(hex);
      }
@@ -1161,7 +1195,6 @@ function classFlag(hex, flag){
     }
 }
 function seizureTerritory(bool) {
-    seizTerr = bool;
     if(bool){
     availableCells.forEach(hex => {
         let bool2 = false;
@@ -1176,12 +1209,10 @@ function seizureTerritory(bool) {
             hex.id.classList.add("availableCell");
         }
     })
-    ID.actionFlag.classList.add("actionBtnTrue");
     }else {
         availableCells.forEach(hex => {
             hex.id.classList.remove("availableCell");
         })
-        ID.actionFlag.classList.remove("actionBtnTrue");
     }
 }
 function finance(m) {
@@ -1195,7 +1226,15 @@ function woodChange(w){
 function energyChange(e){
     energy += e;
     ID.energyInfo.textContent = energy+"/"+energyMax;
+    removeAvailableCell();
 };
+function removeAvailableCell(){
+    if(energy < 3){
+        availableCells.forEach(cell => {
+            cell.id.classList.remove("availableCell");
+        })
+    }
+}
 function foodChange(f){
     food += f;
     ID.foodInfo.textContent = food;
