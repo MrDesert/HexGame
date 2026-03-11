@@ -736,11 +736,20 @@ function nextStep(){
     hexs.forEach(hex => {
             console.log(money)
         if(hex.item == "tree"){
-            newTreeChild(hex, 25);
+            newTreeChild(hex, 25)
+            if(Math.floor(Math.random()*10) == 0){
+                classItem(hex, "treeMushrooms");
+            }
         }
-        if(hex.item == "treeChild"){
-            treeGrowth(hex, 30);
+        if(hex.item == "treeMushrooms"){
+            const cells = neighboringСells(hex);
+            cells.forEach(cell =>{
+                if(cell.item == "tree" && Math.floor(Math.random()*3) == 0){
+                    classItem(cell, "treeMushrooms");
+                }
+            })
         }
+        if(hex.item == "treeChild"){treeGrowth(hex, 30)}
         if(hex.item == "wheatSeed"){
              if(Math.floor(Math.random()*2) == 0){
                 classItem(hex, "wheat");
@@ -856,7 +865,7 @@ function newTreeChild(hex, chance){
         })
 }
 function classItem(hex, item){
-        hex.id.classList.remove("tree", "treeChild", "wheat", "wheatSeed", "house", "houseOld", "waterWell", "void");
+        hex.id.classList.remove("tree", "treeChild", "treeMushrooms", "wheat", "wheatSeed", "house", "houseOld", "waterWell", "void");
         hex.id.classList.add(item);
         hex.item = item;
 }
@@ -888,7 +897,7 @@ function showHexMenu(hex, event) {
     const items = []; // Наполняем пунктами в зависимости от типа клетки
             
     if (hex.land == "player") {
-        if (hex.item == "tree" && energy >= 2) {
+        if ((hex.item == "tree" || hex.item == "treeMushrooms") && energy >= 2) {
             items.push({ text: "🌳 Срубить (5 дерева, 2 энергии)", action: () => woodAction(hex) });
         }
         if (hex.item == "treeChild" && energy >= 1 && money >= 5) {
@@ -903,6 +912,9 @@ function showHexMenu(hex, event) {
         }
         if (hex.item == "wheat" && energy >= 1) {
             items.push({ text: "🌾 Собрать (+1 еда)", action: () => harvestAction(hex) });
+        }
+        if (hex.item == "treeMushrooms" && energy >= 1) {
+            items.push({ text: "🌾 Собрать (+2 еда)", action: () => mushroomsAction(hex) });
         }
         if (hex.item == "houseOld" && energy >= 2 && money >= 10){
             items.push({ text: "Восстановить (-10 монет, 2 энергии)", action: () => rebuildHouse(hex) });
@@ -1056,6 +1068,13 @@ function harvestAction(hex){
     energyChange(-1);
     foodChange(1);
     classItem(hex, "void");
+}
+function mushroomsAction(hex){
+    flyAction(hex, -1, "energy", "red");
+    flyAction(hex, 2, "food", "green");
+    energyChange(-1);
+    foodChange(2);
+    classItem(hex, "tree");
 }
 function rebuildHouse(hex){
     flyAction(hex, -2, "energy", "red");

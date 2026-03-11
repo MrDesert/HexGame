@@ -443,6 +443,9 @@ body {
 .tree{
    background-image: url("img/firBig.png");
 }
+.treeMushrooms{
+   background-image: url("img/firMushrooms.png");
+}
 .wheat{
    background-image: url("img/wheat.png");
 }
