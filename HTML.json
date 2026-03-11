@@ -329,5 +329,94 @@
             "Tag":"button",
             "Text": "Выбрать",
             "OnClick": "buyItem('house')"
+        },
+    "buyWaterWell":{
+        "Parent": "shopWindowCont",
+        "Class": "buyItem buyItemDisable"
+    },
+        "buyWaterWellCost":{
+            "Parent": "buyWaterWell",
+            "Class": "buyItemCost"
+        },
+            "buyWaterWellCostCont":{
+                "Parent": "buyWaterWellCost",
+                "Class": "buyItemCostCont"
+            },
+                "buyWaterWellEnergyIMG":{
+                    "Parent": "buyWaterWellCostCont",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"energy"
+                },
+                "buyWaterWellEnergyText":{
+                    "Parent": "buyWaterWellCostCont",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "2"
+                },
+            "buyWaterWellCostCont2":{
+                "Parent": "buyWaterWellCost",
+                "Class": "buyItemCostCont"
+            },
+                "buyWaterWellEnergyIMG2":{
+                    "Parent": "buyWaterWellCostCont2",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"coin"
+                },
+                "buyWaterWellEnergyText2":{
+                    "Parent": "buyWaterWellCostCont2",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "15"
+                },
+            "buyWaterWellCostCont3":{
+                "Parent": "buyWaterWellCost",
+                "Class": "buyItemCostCont"
+            },
+                "buyWaterWellEnergyIMG3":{
+                    "Parent": "buyWaterWellCostCont3",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"firewood"
+                },
+                "buyWaterWellEnergyText3":{
+                    "Parent": "buyWaterWellCostCont3",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "5"
+                },
+        "buyWaterWellIMG":{
+            "Parent": "buyWaterWell",
+            "Class": "buyItemIMG",
+            "Tag":"img",
+            "Src":"waterWell"
+        },
+        "buyWaterWellProfit":{
+            "Parent": "buyWaterWell",
+            "Class": "buyItemProfit"
+        },
+            "buyWaterWellProfitCont":{
+                "Parent": "buyWaterWellProfit",
+                "Class": "buyItemCostCont"
+            },
+                "buyWaterWellProfitWoodText":{
+                    "Parent": "buyWaterWellProfitCont",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "Cадить"
+                },
+                "buyWaterWellProfitWoodIMG":{
+                    "Parent": "buyWaterWellProfitCont",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"wheat"
+                },
+        "buyWaterWellBtn":{
+            "Parent": "buyWaterWell",
+            "Class": "buyItemBtn",
+            "Tag":"button",
+            "Text": "Выбрать",
+            "OnClick": "buyItem('waterWell')"
         }
 }

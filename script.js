@@ -13,8 +13,8 @@ let availableCells = [];
 let currentSeed = Math.floor(Math.random() * 1000000);
 let useSeed = false;
 let itemCounter = 0;
-let money = 90;
-let wood = 30;
+let money = 0;
+let wood = 0;
 let food = 0;
 let energy = 3;
 let energyMax = 3;
@@ -697,8 +697,9 @@ function enemyLand(hex){
 }
 function shop(bool){
     ID.shopWindow.hidden = !bool;
-    const find = searchNeigborCell(hexForBuy, "water");
-    if(bool && energy >= 1 && find){
+    const find = searchNeigborCell(hexForBuy, "land", "water");
+    const find2 = searchNeigborCell(hexForBuy, "item", "waterWell");
+    if(bool && energy >= 1 && (find || find2)){
         ID.buyWheatBtn.disabled = false;
         ID.buyWheat.classList.remove("buyItemDisable");
     } else {
@@ -719,6 +720,13 @@ function shop(bool){
         ID.buyHouseBtn.disabled = true;
         ID.buyHouse.classList.add("buyItemDisable");
     }
+    if(bool && wood >= 5 && energy >= 2 && money >= 15){
+        ID.buyWaterWellBtn.disabled = false;
+        ID.buyWaterWell.classList.remove("buyItemDisable");
+    } else {
+        ID.buyWaterWellBtn.disabled = true;
+        ID.buyWaterWell.classList.add("buyItemDisable");
+    }
 }
 function nextStep(){
     availableCells = [];
@@ -732,6 +740,11 @@ function nextStep(){
         }
         if(hex.item == "treeChild"){
             treeGrowth(hex, 30);
+        }
+        if(hex.item == "wheatSeed"){
+             if(Math.floor(Math.random()*2) == 0){
+                classItem(hex, "wheat");
+             }
         }
         if(hex.item == "void" || hex.item == "wheat"){
             if(Math.floor(Math.random()*2) == 0){
@@ -765,13 +778,17 @@ function nextStep(){
             enemyCells.push(hex)
         }
         if(hex.item == "house"){
-            finance(5);
-            if(food > 2){
+            if(food < 2){
+                classItem(hex, "houseOld")
+                energyMax -= 3;
+                energyPlus(0);
+            }else{
+                flyAction(hex, 5, "coin", "green");
+                flyAction(hex, -2, "food", "green");
+                finance(5);
                 foodChange(-2);
-            }else {
-                finance(-6);
+                energyPlus(3);
             }
-            energyPlus(3);
         }
         if(hex.flag == "new"){
             classFlag(hex, "old");
@@ -798,7 +815,6 @@ function nextStep(){
     raisingFlaf(stepEnemy, 0, "enemy");
     }
     removeClassActionBtn();
-    myLog(enemyCells.length + " 0enemy")
     if(playerCells.length < 1){
         ID.gameEndText.textContent = "Поражение!"
         ID.gameEndText.style.color = "red";
@@ -840,7 +856,7 @@ function newTreeChild(hex, chance){
         })
 }
 function classItem(hex, item){
-        hex.id.classList.remove("tree", "treeChild", "wheat", "house", "void");
+        hex.id.classList.remove("tree", "treeChild", "wheat", "wheatSeed", "house", "houseOld", "waterWell", "void");
         hex.id.classList.add(item);
         hex.item = item;
 }
@@ -873,10 +889,13 @@ function showHexMenu(hex, event) {
             
     if (hex.land == "player") {
         if (hex.item == "tree" && energy >= 2) {
-            items.push({ text: "🌳 Срубить (5 дерева, -2 энергии)", action: () => woodAction(hex) });
+            items.push({ text: "🌳 Срубить (5 дерева, 2 энергии)", action: () => woodAction(hex) });
         }
         if (hex.item == "treeChild" && energy >= 1 && money >= 5) {
-            items.push({ text: "🌱 Полить (5 денег, -1 энергии)", action: () => waterTreeAction(hex) });
+            items.push({ text: "🌱 Полить (5 монет, 1 энергии)", action: () => waterAction(hex) });
+        }
+        if (hex.item == "wheatSeed" && energy >= 1 && money >= 2) {
+            items.push({ text: "🌱 Полить (2 монет, 1 энергии)", action: () => waterAction(hex) });
         }
         if (hex.item == "void") {
             items.push({ text: "Установить...", action: () => shop(true) });
@@ -885,11 +904,17 @@ function showHexMenu(hex, event) {
         if (hex.item == "wheat" && energy >= 1) {
             items.push({ text: "🌾 Собрать (+1 еда)", action: () => harvestAction(hex) });
         }
+        if (hex.item == "houseOld" && energy >= 2 && money >= 10){
+            items.push({ text: "Восстановить (-10 монет, 2 энергии)", action: () => rebuildHouse(hex) });
+        }
+        if (hex.item == "houseOld" && energy >= 2){
+            items.push({ text: "Снести (+10 монет, 2 энергии)", action: () => demolishHouse(hex)});
+        }
     }
     
     if ((hex.land == "grass" && energy >= 3) || (hex.land == "enemy" && energy >= 6)) {
         const energ = hex.land == "enemy" ? -6 : -3; 
-        const find = searchNeigborCell(hex, "player")
+        const find = searchNeigborCell(hex, "land", "player")
         if(find) items.push({ text: "⚔️ Захватить", action: () => raisingFlaf(hex, energ, "player")});
     }
     
@@ -947,11 +972,19 @@ function showHexMenu(hex, event) {
     }
 }
 
-function searchNeigborCell(hex, filter){
+function searchNeigborCell(hex, type, filter){
     const cells = neighboringСells(hex);
-    for(const cell of cells){
-        if(cell.land == filter){
-            return true;
+    if(type == "land"){
+        for(const cell of cells){
+            if(cell.land == filter){
+                return true;
+            }
+        }
+    } else if(type == "item"){
+        for(const cell of cells){
+            if(cell.item == filter){
+                return true;
+            }
         }
     }
 }
@@ -985,7 +1018,16 @@ function buyItem(item){
     if(item == "wheat" && hexForBuy.land == "player"){
         flyAction(hexForBuy, -1, "energy", "red");
         energyChange(-1);
-        classItem(hexForBuy, "wheat")
+        classItem(hexForBuy, "wheatSeed")
+    }
+    if(item == "waterWell" && hexForBuy.land == "player"){
+        flyAction(hexForBuy, -5, "firewood", "red");
+        flyAction(hexForBuy, -15, "coin", "red");
+        flyAction(hexForBuy, -2, "energy", "red");
+        energyChange(-2);
+        woodChange(-5);
+        finance(-15);
+        classItem(hexForBuy, "waterWell")
     }
 }
 function woodAction(hex){
@@ -995,18 +1037,39 @@ function woodAction(hex){
     energyChange(-2);
     classItem(hex, "void");
 }
-function waterTreeAction(hex){
-    flyAction(hex, -5, "coin", "red");
+function waterAction(hex){
     flyAction(hex, -1, "energy", "red");
-    finance(-5);
     energyChange(-1);
-    treeGrowth(hex, 3);
+    if(hex.item == "treeChild"){
+        flyAction(hex, -5, "coin", "red");
+        finance(-5);
+        treeGrowth(hex, 3);
+    }else if(hex.item == "wheatSeed") {
+        flyAction(hex, -2, "coin", "red");
+        finance(-2);
+        classItem(hex, "wheat")
+    };
 }
 function harvestAction(hex){
     flyAction(hex, -1, "energy", "red");
     flyAction(hex, 1, "food", "green");
     energyChange(-1);
     foodChange(1);
+    classItem(hex, "void");
+}
+function rebuildHouse(hex){
+    flyAction(hex, -2, "energy", "red");
+    flyAction(hex, -10, "coin", "green");
+    energyMax += 3;
+    energyChange(-2);
+    finance(-10);
+    classItem(hex, "house");
+}
+function demolishHouse(hex){
+    flyAction(hex, -2, "energy", "red");
+    flyAction(hex, 10, "coin", "green");
+    energyChange(-2);
+    finance(10);
     classItem(hex, "void");
 }
 function flyAction(hex, value, img, color){

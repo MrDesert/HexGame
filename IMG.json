@@ -1,5 +1,7 @@
 {
     "house":"img/house.png",
+    "houseOld":"img/houseOld.png",
+    "waterWell":"img/waterWell.png",
     "firBig":"img/firBig.png",
     "firLitle":"img/firLitle.png",
     "firewood":"img/firewood.png",
@@ -7,5 +9,6 @@
     "food": "img/food.png",
     "coin": "img/coin.png",
     "flag": "img/flag.png",
-    "wheat": "img/wheat.png"
+    "wheat": "img/wheat.png",
+    "wheatSeed": "img/wheatSeed.png"
 }

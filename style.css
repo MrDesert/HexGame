@@ -278,7 +278,7 @@ body {
    left: 50%;
    transform: translate(-50%, -50%);
    height: 200px;
-   width: 345px;
+   width: 450px;
    border: solid black 2px;
    border-radius: 10px;
    padding: 13px;
@@ -446,8 +446,17 @@ body {
 .wheat{
    background-image: url("img/wheat.png");
 }
+.wheatSeed{
+   background-image: url("img/wheatSeed.png");
+}
 .house{
    background-image: url("img/house.png");
+}
+.houseOld{
+   background-image: url("img/houseOld.png");
+}
+.waterWell{
+   background-image: url("img/waterWell.png");
 }
 .flag{
    background-image: url("img/flag.png");
