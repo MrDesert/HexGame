@@ -7,6 +7,42 @@ let menuElement = null;
 
 const hexs = [];
 const mapHexs = [];
+const actions = {
+    wood: (hex) => {
+        changeCurrencies({Wood: 5, Energy: -2, Fly: hex});
+        classItem(hex, "void");
+    },
+    waterTree: (hex) => {
+        treeGrowth(hex, 3);
+        changeCurrencies({Coin: -5, Energy: -1, Fly: hex});
+    },
+    harvest: (hex) => {
+        changeCurrencies({Energy: -1, Food: 1, Fly: hex});
+        classItem(hex, "void");
+    },
+    mushrooms: (hex) => {
+        changeCurrencies({Energy: -1, Food: 2, Fly: hex});
+        classItem(hex, "tree");
+    },
+    rebuildHouse: (hex) => {
+        changeCurrencies({Coin: -10, Energy: -2, EnMax: 3, Fly: hex});
+        classItem(hex, "house");
+    },
+    demolishHouse: (hex) => {
+        changeCurrencies({Coin: 10, Energy: -2, Fly: hex});
+        classItem(hex, "void");
+    },
+    warrior: (hex) => {
+        const cells2 = getCellsInRadius(hex, 2);
+        cells2.forEach(cell => {
+            const bool = searchNeigborCell(cell, "land", "player");
+            if(bool){
+                cell.id.classList.add("availableCell");
+                cell.availableWarrior = hex;
+            }
+        });
+    }
+};
 let enemyCells = [];
 let playerCells = [];
 let availableCells = [];
@@ -46,11 +82,7 @@ if (useSeed && currentSeed) {
     const cols = Math.ceil(window.innerWidth/ 85)+1;
     const rows = Math.ceil(window.innerHeight/ 100)+1;
     createHexGrid(rows, cols, 'map');
-}
-        finance(0);
-        woodChange(0);
-        energyChange(0);
-        foodChange(0);
+}       changeCurrencies({Coin: 0, Wood: 0, Energy: 0, Food: 0});
     }
 }
 
@@ -743,8 +775,7 @@ function nextStep(){
     hexs.forEach(hex => {
             console.log(money)
         if(hex.item == "warrior"){
-            finance(-10);
-            foodChange(-1);
+            changeCurrencies({Coin: -10, Food: -1});
             hex.warriorStep = 1;
         }else if(hex.item == "tree"){
             newTreeChild(hex, 25)
@@ -778,20 +809,15 @@ function nextStep(){
         }else if(hex.item == "house"){
             if(food < 2){
                 classItem(hex, "houseOld")
-                energyMax -= 3;
+                changeCurrencies({EnMax: -3});
                 energyPlus(0);
             }else{
-                flyAction(hex, 5, "coin", "green");
-                flyAction(hex, -2, "food", "green");
-                finance(5);
-                foodChange(-2);
-                energyPlus(3);
+                changeCurrencies({Coin: 5, Energy: 3, Food: -2, Fly: hex});
             }
         }
         if(hex.land == "player"){
             if(hex.item == "void"){
-                flyAction(hex, "1", "coin", "green") 
-                finance(1);
+                changeCurrencies({Coin: 1, Fly: hex});
             }
             playerCells.push(hex);
             availableCells = [...availableCells, ...neighboringСells(hex)];
@@ -834,7 +860,7 @@ function energyPlus(value){
             energy += value;
         }
     }
-    energyChange(0);
+    changeCurrencies({Energy: 0});
 }
 function treeGrowth(hex, chance){
     if(Math.round(Math.random()*chance)<1){5
@@ -929,32 +955,32 @@ function showHexMenu(hex, event) {
             
     if (hex.land == "player") {
         if ((hex.item == "tree" || hex.item == "treeMushrooms") && energy >= 2) {
-            items.push({ text: "🌳 Срубить (5 дерева, 2 энергии)", action: () => woodAction(hex) });
+            items.push({ text: "🌳 Срубить (5 дерева, 2 энергии)", action: () =>  actions["wood"](hex)});
         }
         if (hex.item == "treeChild" && energy >= 1 && money >= 5) {
-            items.push({ text: "🌱 Полить (5 монет, 1 энергии)", action: () => waterAction(hex) });
+            items.push({ text: "🌱 Полить (5 монет, 1 энергии)", action: () => actions["waterTree"](hex)});
         }
         if (hex.item == "wheatSeed" && energy >= 1 && money >= 2) {
-            items.push({ text: "🌱 Полить (2 монет, 1 энергии)", action: () => waterAction(hex) });
+            items.push({ text: "🌱 Полить (2 монет, 1 энергии)", action: () => actions["waterWheat"](hex)});
         }
         if (hex.item == "void") {
             items.push({ text: "Установить...", action: () => shop(true) });
             hexForBuy = hex;
         }
         if (hex.item == "wheat" && energy >= 1) {
-            items.push({ text: "🌾 Собрать (+1 еда)", action: () => harvestAction(hex) });
+            items.push({ text: "🌾 Собрать (+1 еда)", action: () => actions["harvest"](hex)});
         }
         if (hex.item == "treeMushrooms" && energy >= 1) {
-            items.push({ text: "🌾 Собрать (+2 еда)", action: () => mushroomsAction(hex) });
+            items.push({ text: "🌾 Собрать (+2 еда)", action: () => actions["mushrooms"](hex)});
         }
         if (hex.item == "houseOld" && energy >= 2 && money >= 10){
-            items.push({ text: "Восстановить (-10 монет, 2 энергии)", action: () => rebuildHouse(hex) });
+            items.push({ text: "Восстановить (-10 монет, 2 энергии)", action: () => actions["rebuildHouse"](hex)});
         }
         if (hex.item == "houseOld" && energy >= 2){
-            items.push({ text: "Снести (+10 монет, 2 энергии)", action: () => demolishHouse(hex)});
+            items.push({ text: "Снести (+10 монет, 2 энергии)", action: () => actions["demolishHouse"](hex)});
         }
         if (hex.item == "warrior" && hex.warriorStep > 0){
-            items.push({ text: "⚔️ Захватить", action: () => warriorAction(hex)});
+            items.push({ text: "⚔️ Захватить", action: () => actions["warrior"](hex)});
         }
     }
     
@@ -1037,124 +1063,34 @@ function hexAction(row, col, event) {
 function buyItem(item){
     shop(false);
     if(item == "house" && hexForBuy.land == "player"){
-        flyAction(hexForBuy, -10, "firewood", "red");
-        flyAction(hexForBuy, -30, "coin", "red");
-        flyAction(hexForBuy, -3, "energy", "red");
-        woodChange(-10);
-        finance(-30);
-        energyMax += 3;
-        energyChange(-3);
+        changeCurrencies({Coin: -30, Wood: -10, Energy: -3, EnMax: 3, Fly: hexForBuy})
         classItem(hexForBuy, "house")
     }
     if(item == "tree" && hexForBuy.land == "player"){
-        flyAction(hexForBuy, -10, "coin", "red");
-        flyAction(hexForBuy, -2, "energy", "red");
-        finance(-10);
-        energyChange(-2);
+        changeCurrencies({Coin: -10, Energy: -2, Fly: hexForBuy});
         classItem(hexForBuy, "treeChild")
     }
     if(item == "wheat" && hexForBuy.land == "player"){
-        flyAction(hexForBuy, -1, "energy", "red");
-        energyChange(-1);
+        changeCurrencies({Energy: -1, Fly: hexForBuy})
         classItem(hexForBuy, "wheatSeed")
     }
     if(item == "waterWell" && hexForBuy.land == "player"){
-        flyAction(hexForBuy, -5, "firewood", "red");
-        flyAction(hexForBuy, -15, "coin", "red");
-        flyAction(hexForBuy, -2, "energy", "red");
-        energyChange(-2);
-        woodChange(-5);
-        finance(-15);
+        changeCurrencies({Coin: -15, Wood: -5, Energy: -2, Fly: hexForBuy});
         classItem(hexForBuy, "waterWell")
     }
     if(item == "warrior" && hexForBuy.land == "player"){
-        flyAction(hexForBuy, -100, "coin", "red");
-        flyAction(hexForBuy, -3, "energy", "red");
-        energyChange(-3);
-        finance(-100);
+        changeCurrencies({Coin: -100, Energy: -3, Fly: hexForBuy});
         classItem(hexForBuy, "warrior");
         hexForBuy.warriorStep = 1;
     }
-}
-function woodAction(hex){
-    flyAction(hex, 5, "firewood", "green");
-    flyAction(hex, -2, "energy", "red");
-    woodChange(5);
-    energyChange(-2);
-    classItem(hex, "void");
-}
-function waterAction(hex){
-    flyAction(hex, -1, "energy", "red");
-    energyChange(-1);
-    if(hex.item == "treeChild"){
-        flyAction(hex, -5, "coin", "red");
-        finance(-5);
-        treeGrowth(hex, 3);
-    }else if(hex.item == "wheatSeed") {
-        flyAction(hex, -2, "coin", "red");
-        finance(-2);
-        classItem(hex, "wheat")
-    };
-}
-function harvestAction(hex){
-    flyAction(hex, -1, "energy", "red");
-    flyAction(hex, 1, "food", "green");
-    energyChange(-1);
-    foodChange(1);
-    classItem(hex, "void");
-}
-function mushroomsAction(hex){
-    flyAction(hex, -1, "energy", "red");
-    flyAction(hex, 2, "food", "green");
-    energyChange(-1);
-    foodChange(2);
-    classItem(hex, "tree");
-}
-function rebuildHouse(hex){
-    flyAction(hex, -2, "energy", "red");
-    flyAction(hex, -10, "coin", "green");
-    energyMax += 3;
-    energyChange(-2);
-    finance(-10);
-    classItem(hex, "house");
-}
-function demolishHouse(hex){
-    flyAction(hex, -2, "energy", "red");
-    flyAction(hex, 10, "coin", "green");
-    energyChange(-2);
-    finance(10);
-    classItem(hex, "void");
-}
-function warriorAction(hex){
-    const cells2 = getCellsInRadius(hex, 2);
-    cells2.forEach(cell => {
-            myLog("E")
-        const bool = searchNeigborCell(cell, "land", "player");
-        if(bool){
-            cell.id.classList.add("availableCell");
-            cell.availableWarrior = hex;
-        }
-    })
-}
-function flyAction(hex, value, img, color){
-    const id = "fly"+hex.row+hex.col;
-    DOM.Create({Parent:"body", Id:id, Class:"flyCost"});
-    DOM.Create({Parent:id, Tag:"img", Class:"flyCostIMG", Src:IMG[img].src});
-    DOM.Create({Parent:id, Tag:"span", Class:"flyCostText", Text: value});
-            const object =  hex.id.getBoundingClientRect();
-            const objectX = object.left + Math.floor(object.width/2)-23;
-            const objectY = object.top + Math.floor(object.height/2)-13;
-            const dom = DOM.Id(id)
-            dom.style.top = objectY+"px";
-            dom.style.left = objectX+"px";
-            dom.style.color = color
-            animationOnce(dom, "fly");
-            setTimeout(()=>dom.remove(), 1000);
-}
+} 
 function raisingFlaf(hex, en, who){
     if(who == "player"){
-        energyChange(en);
-    }
+        changeCurrencies({Energy: en, Fly: hex});
+        playerCells.push(hex);
+    }else if(who == "enemy"){
+        enemyCells.push(hex);
+     }
     const cells = neighboringСells(hex);
     for (const cell of cells) {
         if(who == "player" && (cell.land == "grass" || cell.land == "enemy")){
@@ -1170,13 +1106,6 @@ function raisingFlaf(hex, en, who){
             }
         }
     }
-    if(who == "player"){
-        playerCells.push(hex);
-        flyAction(hex, en, "energy", "red");
-        removeAvailableCell();
-     } else if(who == "enemy"){
-        enemyCells.push(hex);
-     }
 }
 function classFlag(hex, flag){
     hex.flag = flag;
@@ -1215,31 +1144,46 @@ function seizureTerritory(bool) {
         })
     }
 }
-function finance(m) {
-    money += m;
+function changeCurrencies({Coin = 0, Wood = 0, Energy = 0, EnMax = 0, Food = 0, Fly = null}){
+    money += Coin;
+    wood += Wood;
+    energy += Energy;
+    energyMax += EnMax;
+    food += Food;
     ID.moneyInfo.textContent = money;
-}
-function woodChange(w){
-    wood += w;
     ID.woodInfo.textContent = wood;
-}
-function energyChange(e){
-    energy += e;
     ID.energyInfo.textContent = energy+"/"+energyMax;
-    removeAvailableCell();
-};
-function removeAvailableCell(){
+    ID.foodInfo.textContent = food;
+    if(Fly){
+        const currencies = [[Coin, "coin"], [Wood, "firewood"], [Energy, "energy"], [Food, "food"]];
+        currencies.forEach(cur => {
+            if(cur[0] != 0){
+                const color = cur[0] > 0 ? "green" : "red";
+                flyAction(Fly, cur[0], cur[1], color);
+            }
+        })
+    }
     if(energy < 3){
         availableCells.forEach(cell => {
             cell.id.classList.remove("availableCell");
         })
     }
 }
-function foodChange(f){
-    food += f;
-    ID.foodInfo.textContent = food;
+function flyAction(hex, value, img, color){
+    const id = "fly"+hex.row+hex.col;
+    DOM.Create({Parent:"body", Id:id, Class:"flyCost"});
+    DOM.Create({Parent:id, Tag:"img", Class:"flyCostIMG", Src:IMG[img].src});
+    DOM.Create({Parent:id, Tag:"span", Class:"flyCostText", Text: value});
+            const object =  hex.id.getBoundingClientRect();
+            const objectX = object.left + Math.floor(object.width/2)-23;
+            const objectY = object.top + Math.floor(object.height/2)-13;
+            const dom = DOM.Id(id)
+            dom.style.top = objectY+"px";
+            dom.style.left = objectX+"px";
+            dom.style.color = color
+            animationOnce(dom, "fly");
+            setTimeout(()=>dom.remove(), 1000);
 }
-
 // Функция инициализации управления картой
 function initMapControls() {
     // Получаем DOM-элемент карты (убеждаемся что он уже создан)

@@ -403,7 +403,7 @@ body {
    background-color: green;
 }
 .enemyGrass{
-   background-color: green;
+   background-color: rgb(128, 0, 0);
    filter: grayscale(60%);
 }
 .treeChild{
