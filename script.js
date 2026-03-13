@@ -17,11 +17,11 @@ const actions = {
         changeCurrencies({Coin: -5, Energy: -1, Fly: hex});
     },
     harvest: (hex) => {
-        changeCurrencies({Energy: -1, Food: 1, Fly: hex});
+        changeCurrencies({Energy: -1, Food: 2, Fly: hex});
         classItem(hex, "void");
     },
     mushrooms: (hex) => {
-        changeCurrencies({Energy: -1, Food: 2, Fly: hex});
+        changeCurrencies({Energy: -1, Food: 3, Fly: hex});
         classItem(hex, "tree");
     },
     rebuildHouse: (hex) => {
@@ -43,6 +43,54 @@ const actions = {
         });
     }
 };
+const shopItem = {
+    wheat:{
+        coin: 0,
+        wood: 0,
+        energy: 1,
+        food: 0,
+        visible: (hex) => {
+            changeCurrencies({Wood: 5, Energy: -2, Fly: hex});
+            classItem(hex, "void");
+        }
+    },
+    fir:{
+        coin: 10,
+        wood: 0,
+        energy: 2,
+        food: 0
+    },
+    house:{
+        coin: 30,
+        wood: 10,
+        energy: 3,
+        food: 0
+    },
+    waterWell:{
+        coin: 15,
+        wood: 5,
+        energy: 2,
+        food: 0
+    },
+    peasant:{
+        coin: 10,
+        wood: 0,
+        energy: 1,
+        food: 0
+    },
+    spearman:{
+        coin: 50,
+        wood: 0,
+        energy: 2,
+        food: 0
+    },
+    warrior:{
+        coin: 100,
+        wood: 0,
+        energy: 3,
+        food: 0
+    }
+}
 let enemyCells = [];
 let playerCells = [];
 let availableCells = [];
@@ -731,41 +779,61 @@ function shop(bool){
     ID.shopWindow.hidden = !bool;
     const find = searchNeigborCell(hexForBuy, "land", "water");
     const find2 = searchNeigborCell(hexForBuy, "item", "waterWell");
-    if(bool && energy >= 1 && (find || find2)){
-        ID.buyWheatBtn.disabled = false;
-        ID.buyWheat.classList.remove("buyItemDisable");
-    } else {
-        ID.buyWheatBtn.disabled = true;
-        ID.buyWheat.classList.add("buyItemDisable");
+    for (let key in shopItem) {
+        if(energy >= shopItem[key].energy && money >= shopItem[key].coin && wood >= shopItem[key].wood && food >= shopItem[key].food){
+            ID.buy[key]Btn.disabled = false;
+            ID.buyWheat.classList.remove("buyItemDisable");
+        }
     }
-    if(bool && energy >= 2 && money >= 10){
-        ID.buyFirBtn.disabled = false;
-        ID.buyFir.classList.remove("buyItemDisable");
-    } else {
-        ID.buyFirBtn.disabled = true;
-        ID.buyFir.classList.add("buyItemDisable");
-    }
-    if(bool && wood >= 10 && energy >= 3 && money >= 30){
-        ID.buyHouseBtn.disabled = false;
-        ID.buyHouse.classList.remove("buyItemDisable");
-    } else {
-        ID.buyHouseBtn.disabled = true;
-        ID.buyHouse.classList.add("buyItemDisable");
-    }
-    if(bool && wood >= 5 && energy >= 2 && money >= 15){
-        ID.buyWaterWellBtn.disabled = false;
-        ID.buyWaterWell.classList.remove("buyItemDisable");
-    } else {
-        ID.buyWaterWellBtn.disabled = true;
-        ID.buyWaterWell.classList.add("buyItemDisable");
-    }
-    if(bool && energy >= 3 && money >= 100){
-        ID.buyWarriorBtn.disabled = false;
-        ID.buyWarrior.classList.remove("buyItemDisable");
-    } else {
-        ID.buyWarriorBtn.disabled = true;
-        ID.buyWarrior.classList.add("buyItemDisable");
-    }
+    // if(bool && energy >= 1 && (find || find2)){
+    //     ID.buyWheatBtn.disabled = false;
+    //     ID.buyWheat.classList.remove("buyItemDisable");
+    // } else {
+    //     ID.buyWheatBtn.disabled = true;
+    //     ID.buyWheat.classList.add("buyItemDisable");
+    // }
+    // if(bool && energy >= 2 && money >= 10){
+    //     ID.buyFirBtn.disabled = false;
+    //     ID.buyFir.classList.remove("buyItemDisable");
+    // } else {
+    //     ID.buyFirBtn.disabled = true;
+    //     ID.buyFir.classList.add("buyItemDisable");
+    // }
+    // if(bool && wood >= 10 && energy >= 3 && money >= 30){
+    //     ID.buyHouseBtn.disabled = false;
+    //     ID.buyHouse.classList.remove("buyItemDisable");
+    // } else {
+    //     ID.buyHouseBtn.disabled = true;
+    //     ID.buyHouse.classList.add("buyItemDisable");
+    // }
+    // if(bool && wood >= 5 && energy >= 2 && money >= 15){
+    //     ID.buyWaterWellBtn.disabled = false;
+    //     ID.buyWaterWell.classList.remove("buyItemDisable");
+    // } else {
+    //     ID.buyWaterWellBtn.disabled = true;
+    //     ID.buyWaterWell.classList.add("buyItemDisable");
+    // }
+    // if(bool && energy >= 1 && money >= 10){
+    //     ID.buyPeasantBtn.disabled = false;
+    //     ID.buyPeasant.classList.remove("buyItemDisable");
+    // } else {
+    //     ID.buyPeasantBtn.disabled = true;
+    //     ID.buyPeasant.classList.add("buyItemDisable");
+    // }
+    // if(bool && energy >= 2 && money >= 50){
+    //     ID.buySpearmanBtn.disabled = false;
+    //     ID.buySpearman.classList.remove("buyItemDisable");
+    // } else {
+    //     ID.buySpearmanBtn.disabled = true;
+    //     ID.buySpearman.classList.add("buyItemDisable");
+    // }
+    // if(bool && energy >= 3 && money >= 100){
+    //     ID.buyWarriorBtn.disabled = false;
+    //     ID.buyWarrior.classList.remove("buyItemDisable");
+    // } else {
+    //     ID.buyWarriorBtn.disabled = true;
+    //     ID.buyWarrior.classList.add("buyItemDisable");
+    // }
 }
 function nextStep(){
     availableCells = [];
@@ -876,7 +944,7 @@ function newTreeChild(hex, chance){
         })
 }
 function classItem(hex, item){
-        hex.id.classList.remove("tree", "treeChild", "treeMushrooms", "wheat", "wheatSeed", "house", "houseOld", "waterWell", "void", "warrior");
+        hex.id.classList.remove("tree", "treeChild", "treeMushrooms", "wheat", "wheatSeed", "house", "houseOld", "waterWell", "void", "warrior", "peasant", "spearman");
         hex.id.classList.add(item);
         hex.item = item;
 }
@@ -968,10 +1036,10 @@ function showHexMenu(hex, event) {
             hexForBuy = hex;
         }
         if (hex.item == "wheat" && energy >= 1) {
-            items.push({ text: "🌾 Собрать (+1 еда)", action: () => actions["harvest"](hex)});
+            items.push({ text: "🌾 Собрать (+2 еда)", action: () => actions["harvest"](hex)});
         }
         if (hex.item == "treeMushrooms" && energy >= 1) {
-            items.push({ text: "🌾 Собрать (+2 еда)", action: () => actions["mushrooms"](hex)});
+            items.push({ text: "🌾 Собрать (+3 еда)", action: () => actions["mushrooms"](hex)});
         }
         if (hex.item == "houseOld" && energy >= 2 && money >= 10){
             items.push({ text: "Восстановить (-10 монет, 2 энергии)", action: () => actions["rebuildHouse"](hex)});
@@ -1077,6 +1145,16 @@ function buyItem(item){
     if(item == "waterWell" && hexForBuy.land == "player"){
         changeCurrencies({Coin: -15, Wood: -5, Energy: -2, Fly: hexForBuy});
         classItem(hexForBuy, "waterWell")
+    }
+    if(item == "peasant" && hexForBuy.land == "player"){
+        changeCurrencies({Coin: -10, Energy: -1, Fly: hexForBuy});
+        classItem(hexForBuy, "peasant");
+        hexForBuy.warriorStep = 1;
+    }
+    if(item == "spearman" && hexForBuy.land == "player"){
+        changeCurrencies({Coin: -40, Energy: -2, Fly: hexForBuy});
+        classItem(hexForBuy, "spearman");
+        hexForBuy.warriorStep = 1;
     }
     if(item == "warrior" && hexForBuy.land == "player"){
         changeCurrencies({Coin: -100, Energy: -3, Fly: hexForBuy});
