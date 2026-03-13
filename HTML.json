@@ -408,6 +408,184 @@
             "Text": "Выбрать",
             "OnClick": "buyItem('waterWell')"
         },
+    "buyPeasant":{
+        "Parent": "shopWindowCont",
+        "Class": "buyItem buyItemDisable"
+    },
+        "buyPeasantCost":{
+            "Parent": "buyPeasant",
+            "Class": "buyItemCost"
+        },
+            "buyPeasantCostCont":{
+                "Parent": "buyPeasantCost",
+                "Class": "buyItemCostCont"
+            },
+                "buyPeasantEnergyIMG":{
+                    "Parent": "buyPeasantCostCont",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"energy"
+                },
+                "buyPeasantEnergyText":{
+                    "Parent": "buyPeasantCostCont",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "1"
+                },
+            "buyPeasantCostCont2":{
+                "Parent": "buyPeasantCost",
+                "Class": "buyItemCostCont"
+            },
+                "buyPeasantEnergyIMG2":{
+                    "Parent": "buyPeasantCostCont2",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"coin"
+                },
+                "buyPeasantEnergyText2":{
+                    "Parent": "buyPeasantCostCont2",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "10"
+                },
+        "buyPeasantIMG":{
+            "Parent": "buyPeasant",
+            "Class": "buyItemIMG",
+            "Tag":"img",
+            "Src":"peasant"
+        },
+        "buyPeasantProfit":{
+            "Parent": "buyPeasant",
+            "Class": "buyItemProfit"
+        },
+            "buyPeasantProfitCont":{
+                "Parent": "buyPeasantProfit",
+                "Class": "buyItemCostCont"
+            },
+                "buyPeasantProfitWoodText":{
+                    "Parent": "buyPeasantProfitCont",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "День -2"
+                },
+                "buyPeasantProfitWoodIMG":{
+                    "Parent": "buyPeasantProfitCont",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"coin"
+                },
+            "buyPeasantProfitCont2":{
+                "Parent": "buyPeasantProfit",
+                "Class": "buyItemCostCont"
+            },
+                "buyPeasantProfitWoodText2":{
+                    "Parent": "buyPeasantProfitCont2",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "-1"
+                },
+                "buyPeasantProfitWoodIMG2":{
+                    "Parent": "buyPeasantProfitCont2",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"food"
+                },
+        "buyPeasantBtn":{
+            "Parent": "buyPeasant",
+            "Class": "buyItemBtn",
+            "Tag":"button",
+            "Text": "Выбрать",
+            "OnClick": "buyItem('peasant')"
+        },
+    "buySpearman":{
+        "Parent": "shopWindowCont",
+        "Class": "buyItem buyItemDisable"
+    },
+        "buySpearmanCost":{
+            "Parent": "buySpearman",
+            "Class": "buyItemCost"
+        },
+            "buySpearmanCostCont":{
+                "Parent": "buySpearmanCost",
+                "Class": "buyItemCostCont"
+            },
+                "buySpearmanEnergyIMG":{
+                    "Parent": "buySpearmanCostCont",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"energy"
+                },
+                "buySpearmanEnergyText":{
+                    "Parent": "buySpearmanCostCont",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "2"
+                },
+            "buySpearmanCostCont2":{
+                "Parent": "buySpearmanCost",
+                "Class": "buyItemCostCont"
+            },
+                "buySpearmanEnergyIMG2":{
+                    "Parent": "buySpearmanCostCont2",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"coin"
+                },
+                "buySpearmanEnergyText2":{
+                    "Parent": "buySpearmanCostCont2",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "40"
+                },
+        "buySpearmanIMG":{
+            "Parent": "buySpearman",
+            "Class": "buyItemIMG",
+            "Tag":"img",
+            "Src":"spearman"
+        },
+        "buySpearmanProfit":{
+            "Parent": "buySpearman",
+            "Class": "buyItemProfit"
+        },
+            "buySpearmanProfitCont":{
+                "Parent": "buySpearmanProfit",
+                "Class": "buyItemCostCont"
+            },
+                "buySpearmanProfitWoodText":{
+                    "Parent": "buySpearmanProfitCont",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "День -5"
+                },
+                "buySpearmanProfitWoodIMG":{
+                    "Parent": "buySpearmanProfitCont",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"coin"
+                },
+            "buySpearmanProfitCont2":{
+                "Parent": "buySpearmanProfit",
+                "Class": "buyItemCostCont"
+            },
+                "buySpearmanProfitWoodText2":{
+                    "Parent": "buySpearmanProfitCont2",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "-2"
+                },
+                "buySpearmanProfitWoodIMG2":{
+                    "Parent": "buySpearmanProfitCont2",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"food"
+                },
+        "buySpearmanBtn":{
+            "Parent": "buySpearman",
+            "Class": "buyItemBtn",
+            "Tag":"button",
+            "Text": "Выбрать",
+            "OnClick": "buyItem('spearman')"
+        },
     "buyWarrior":{
         "Parent": "shopWindowCont",
         "Class": "buyItem buyItemDisable"
@@ -466,13 +644,13 @@
                     "Parent": "buyWarriorProfitCont",
                     "Class": "buyItemCostText",
                     "Tag":"span",
-                    "Text": "День +3"
+                    "Text": "День -10"
                 },
                 "buyWarriorProfitWoodIMG":{
                     "Parent": "buyWarriorProfitCont",
                     "Class": "buyItemCostIMG",
                     "Tag":"img",
-                    "Src":"energy"
+                    "Src":"coin"
                 },
             "buyWarriorProfitCont2":{
                 "Parent": "buyWarriorProfit",
@@ -482,7 +660,7 @@
                     "Parent": "buyWarriorProfitCont2",
                     "Class": "buyItemCostText",
                     "Tag":"span",
-                    "Text": "-2"
+                    "Text": "-3"
                 },
                 "buyWarriorProfitWoodIMG2":{
                     "Parent": "buyWarriorProfitCont2",

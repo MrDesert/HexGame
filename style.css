@@ -430,6 +430,12 @@ body {
 .waterWell{
    background-image: url("img/waterWell.png");
 }
+.peasant{
+   background-image: url("img/peasant.png");
+}
+.spearman{
+   background-image: url("img/spearman.png");
+}
 .warrior{
    background-image: url("img/warrior.png");
 }
