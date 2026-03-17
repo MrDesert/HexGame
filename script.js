@@ -32,16 +32,52 @@ const actions = {
         changeCurrencies({Coin: 10, Energy: -2, Fly: hex});
         classItem(hex, "void");
     },
-    warrior: (hex) => {
+    peasant: (hex) => {
+        availableCells = [];
         const cells2 = getCellsInRadius(hex, 2);
         cells2.forEach(cell => {
             const bool = searchNeigborCell(cell, "land", "player");
-            if(bool){
+            if(bool && cell.land === "grass" && (cell.item == "void" || cell.item == "wheat" || cell.item == "treeChild")){
+                cell.available = hex;
+                cell.availableType = "peasant";
+                availableCells.push(cell);
                 cell.id.classList.add("availableCell");
-                cell.availableWarrior = hex;
             }
         });
-    }
+    },
+    spearman: (hex) => {
+        availableCells = [];
+        const cells2 = getCellsInRadius(hex, 3);
+        cells2.forEach(cell => {
+            const bool = searchNeigborCell(cell, "land", "player");
+            if(bool && cell.land != "water" && (cell.item == "void" || cell.item == "wheat" || cell.item == "treeChild")){
+                cell.available = hex;
+                cell.availableType = "spearman";
+                availableCells.push(cell);
+                cell.id.classList.add("availableCell");
+            }
+        });
+    },
+    warrior: (hex) => {
+        availableCells = [];
+        const cells2 = getCellsInRadius(hex, 3);
+        cells2.forEach(cell => {
+            const bool = searchNeigborCell(cell, "land", "player");
+            if(bool && cell.land != "water" && (cell.item == "void" || cell.item == "wheat" || cell.item == "treeChild")){
+                cell.available = hex;
+                cell.availableType = "warrior";
+                availableCells.push(cell);
+                cell.id.classList.add("availableCell");
+            }
+        });
+    },
+    king: (hex) => {
+        availableCells = [];
+        playerCells.forEach(cell => {
+            availableCells = [...availableCells, ...neighboringСells(cell)];
+        })
+        seizureTerritory(true);
+    }, 
 };
 const shopItem = {
     Wheat:{
@@ -96,7 +132,7 @@ let itemCounter = 0;
 let money = 100;
 let wood = 0;
 let food = 0;
-let energy = 3;
+let energy = 6;
 let energyMax = 3;
 let warriorStep;
 let hexForBuy;
@@ -215,7 +251,6 @@ function restartGame() {
     ID.map.innerHTML = '';
     hexs.length = 0;
     mapHexs.length = 0;
-    availableCells = [];
     playerCells = [];
     enemyCells = [];
     
@@ -757,12 +792,12 @@ itemCounter++;
     
     playerCells.push(startHex);
     playerLand(startHex);
+    classItem(startHex, "king")
     enemyLand(enemyHex);
-    seizureTerritory(true);
+    classItem(enemyHex, "king");
     initMapControls();
 }
 function playerLand(hex){
-    availableCells = [...availableCells, ...neighboringСells(hex)];
     hex.id?.classList.remove("enemyGrass", "availableCell");
     hex.land = "player";
     hex.id?.classList.add("playrsGrass");
@@ -797,7 +832,13 @@ function nextStep(){
     hexs.forEach(hex => {
             console.log(money)
         if(hex.item == "warrior"){
-            changeCurrencies({Coin: -10, Food: -1});
+            changeCurrencies({Coin: -10, Food: -2});
+            hex.warriorStep = 1;
+        }else if(hex.item == "spearman"){
+            changeCurrencies({Coin: -5, Food: -1});
+            hex.warriorStep = 1;
+        }else if(hex.item == "peasant"){
+            changeCurrencies({Coin: -2, Food: -1});
             hex.warriorStep = 1;
         }else if(hex.item == "tree"){
             newTreeChild(hex, 25)
@@ -842,7 +883,7 @@ function nextStep(){
                 changeCurrencies({Coin: 1, Fly: hex});
             }
             playerCells.push(hex);
-            availableCells = [...availableCells, ...neighboringСells(hex)];
+            // availableCells = [...availableCells, ...neighboringСells(hex)];
         }else if(hex.land == "enemy"){
             enemyCells.push(hex)
         }
@@ -867,7 +908,6 @@ function nextStep(){
     }
     if(playerCells.length < 1){windowGameEnd("Поражение!", "red")}
     else if(enemyCells.length < 1){windowGameEnd("Победа!", "green")}
-    seizureTerritory(true);
 }
 function windowGameEnd(text, color){
     ID.gameEndText.textContent = text;
@@ -898,7 +938,7 @@ function newTreeChild(hex, chance){
         })
 }
 function classItem(hex, item){
-        hex.id.classList.remove("tree", "treeChild", "treeMushrooms", "wheat", "wheatSeed", "house", "houseOld", "waterWell", "void", "warrior", "peasant", "spearman");
+        hex.id.classList.remove("tree", "treeChild", "treeMushrooms", "wheat", "wheatSeed", "house", "houseOld", "waterWell", "void", "warrior", "peasant", "spearman", "king");
         hex.id.classList.add(item);
         hex.item = item;
 }
@@ -976,6 +1016,9 @@ function showHexMenu(hex, event) {
     const items = []; // Наполняем пунктами в зависимости от типа клетки
             
     if (hex.land == "player") {
+        if ((hex.item == "king") && energy >= 3) {
+            items.push({ text: "Захватить территорию", action: () =>  actions["king"](hex)});
+        }
         if ((hex.item == "tree" || hex.item == "treeMushrooms") && energy >= 2) {
             items.push({ text: "🌳 Срубить (5 дерева, 2 энергии)", action: () =>  actions["wood"](hex)});
         }
@@ -985,7 +1028,7 @@ function showHexMenu(hex, event) {
         if (hex.item == "wheatSeed" && energy >= 1 && money >= 2) {
             items.push({ text: "🌱 Полить (2 монет, 1 энергии)", action: () => actions["waterWheat"](hex)});
         }
-        if (hex.item == "void") {
+        if (hex.item == "void" && energy >= 1) {
             items.push({ text: "Установить...", action: () => shop(true) });
             hexForBuy = hex;
         }
@@ -1001,15 +1044,21 @@ function showHexMenu(hex, event) {
         if (hex.item == "houseOld" && energy >= 2){
             items.push({ text: "Снести (+10 монет, 2 энергии)", action: () => actions["demolishHouse"](hex)});
         }
+        if (hex.item == "peasant" && hex.warriorStep > 0){
+            items.push({ text: "Ход", action: () => actions["peasant"](hex)});
+        }
+        if (hex.item == "spearman" && hex.warriorStep > 0){
+            items.push({ text: "Ход", action: () => actions["spearman"](hex)});
+        }
         if (hex.item == "warrior" && hex.warriorStep > 0){
-            items.push({ text: "⚔️ Захватить", action: () => actions["warrior"](hex)});
+            items.push({ text: "Ход", action: () => actions["warrior"](hex)});
         }
     }
     
-    if (hex.land == "grass" && energy >= 3) {
-        const find = searchNeigborCell(hex, "land", "player")
-        if(find) items.push({ text: "⚔️ Захватить", action: () => raisingFlaf(hex, -3, "player")});
-    }
+    // if (hex.land == "grass" && energy >= 3) {
+    //     const find = searchNeigborCell(hex, "land", "player")
+    //     if(find) items.push({ text: "⚔️ Захватить", action: () => raisingFlaf(hex, -3, "player")});
+    // }
     
     if (items.length === 0) {close(); return} // Если нет действий - не показываем меню
     
@@ -1067,16 +1116,31 @@ function showHexMenu(hex, event) {
 
 function hexAction(row, col, event) {
     const hex = hexs[mapHexs[row][col]];
-    if(hex.availableWarrior){
-        playerLand(hex);
-        classItem(hex.availableWarrior, "void")
-        classItem(hex, "warrior")
-        hex.availableWarrior.warriorStep -= 1;
-        const cells = neighboringСells(hex.availableWarrior);
-        cells.forEach(cell => {
-                    myLog(cell)
+    if(hex.available){
+        myLog("flag")
+        if(hex.available === "flag"){
+            raisingFlaf(hex, -3, "player");
+        }else{
+            if(hex.availableType === "warrior"){
+                classItem(hex, "warrior");
+            } else if (hex.availableType === "peasant"){
+                if(hex.item === "wheat"){
+                    actions["harvest"](hex);
+                }
+                classItem(hex, "peasant");
+            } else if (hex.availableType === "spearman"){
+                if(hex.item === "wheat"){
+                    actions["harvest"](hex);
+                }
+                classItem(hex, "spearman");
+            }
+            playerLand(hex);
+            classItem(hex.available, "void")
+            hex.available.warriorStep -= 1;
+        }
+        availableCells.forEach(cell => {
             cell.id.classList.remove("availableCell");
-            cell.availableWarrior = null;
+            cell.available = null;
         })
     } else {
     showHexMenu(hex, event);
@@ -1110,8 +1174,13 @@ function buyItem(item){
         classItem(hexForBuy, "spearman");
         hexForBuy.warriorStep = 1;
     }
+    if(item === "horseman" && hexForBuy.land == "player"){
+        changeCurrencies({Coin: -100, Energy: -4, Fly: hexForBuy});
+        classItem(hexForBuy, "horseman");
+        hexForBuy.warriorStep = 1;
+    }
     if(item == "warrior" && hexForBuy.land == "player"){
-        changeCurrencies({Coin: -100, Energy: -3, Fly: hexForBuy});
+        changeCurrencies({Coin: -200, Energy: -6, Fly: hexForBuy});
         classItem(hexForBuy, "warrior");
         hexForBuy.warriorStep = 1;
     }
@@ -1120,14 +1189,17 @@ function raisingFlaf(hex, en, who){
     if(who == "player"){
         changeCurrencies({Energy: en, Fly: hex});
         playerCells.push(hex);
+        availableCells.forEach(cell => {
+            cell.id.classList.remove("availableCell")
+        })
     }else if(who == "enemy"){
         enemyCells.push(hex);
      }
     const cells = neighboringСells(hex);
     for (const cell of cells) {
-        if(who == "player" && (cell.land == "grass" || cell.land == "enemy")){
-            cell.id.classList.add("availableCell");
-        }
+        // if(who == "player" && (cell.land == "grass" || cell.land == "enemy")){
+        //     cell.id.classList.add("availableCell");
+        // }
         if (cell.land == who) {
             if(who == "player"){
                 playerLand(hex);
@@ -1168,6 +1240,7 @@ function seizureTerritory(bool) {
         }
         if(hex.land != "player" && bool2){
             hex.id.classList.add("availableCell");
+            hex.available = "flag"
         }
     })
     }else {

@@ -14,5 +14,7 @@
     "wheatSeed": "img/wheatSeed.png",
     "peasant": "img/peasant.png",
     "spearman": "img/spearman.png",
-    "warrior": "img/warrior.png"
+    "horseman": "img/horseman.png",
+    "warrior": "img/warrior.png",
+    "king": "img/king.png"
 }

@@ -349,12 +349,8 @@ body {
    top: 0px;
    left: 0px;
 }
-#map:hover {
-   cursor: grab;
-}
-#map:active {
-   cursor: grabbing;
-}
+#map:hover {cursor: grab;}
+#map:active {cursor: grabbing;}
 #edge-fog {
    position: absolute;
    z-index: 20;
@@ -373,7 +369,7 @@ body {
    margin-right: 0px; /* Гексы наезжают друг на друга */
    margin: 2px; /* Чтобы не слипались */
    transition: background-color 0.3s, background-image 0.3s, background-size 0.5s; /* Для плавной смены цвета */
-   background-size: 70%;
+   background-size: 80%;
    background-repeat: no-repeat;
    background-position: center;
 }
@@ -384,61 +380,29 @@ body {
 .hex:active {
    cursor: grabbing;
 }
-.grass{
-   background-color: olive;
-}
-.water{
-   background-color: rgb(18, 18, 143);
-}
-.waterSwamp{
-   background-color: rgb(0, 99, 38);
-}
-.waterSea{
-   background-color: rgb(8, 85, 156);
-}
-.waterLake{
-   background-color: rgb(4, 4, 110);
-}
-.playrsGrass{
-   background-color: green;
-}
+.grass{background-color: olive;}
+.water{background-color: rgb(18, 18, 143);}
+.waterSwamp{background-color: rgb(0, 99, 38);}
+.waterSea{background-color: rgb(8, 85, 156);}
+.waterLake{background-color: rgb(4, 4, 110);}
+.playrsGrass{background-color: green;}
 .enemyGrass{
    background-color: rgb(128, 0, 0);
    filter: grayscale(60%);
 }
-.treeChild{
-   background-image: url("img/firLitle.png");
-}
-.tree{
-   background-image: url("img/firBig.png");
-}
-.treeMushrooms{
-   background-image: url("img/firMushrooms.png");
-}
-.wheat{
-   background-image: url("img/wheat.png");
-}
-.wheatSeed{
-   background-image: url("img/wheatSeed.png");
-}
-.house{
-   background-image: url("img/house.png");
-}
-.houseOld{
-   background-image: url("img/houseOld.png");
-}
-.waterWell{
-   background-image: url("img/waterWell.png");
-}
-.peasant{
-   background-image: url("img/peasant.png");
-}
-.spearman{
-   background-image: url("img/spearman.png");
-}
-.warrior{
-   background-image: url("img/warrior.png");
-}
+.treeChild{background-image: url("img/firLitle.png");}
+.tree{background-image: url("img/firBig.png");}
+.treeMushrooms{background-image: url("img/firMushrooms.png");}
+.wheat{background-image: url("img/wheat.png");}
+.wheatSeed{background-image: url("img/wheatSeed.png");}
+.house{background-image: url("img/house.png");}
+.houseOld{background-image: url("img/houseOld.png");}
+.waterWell{background-image: url("img/waterWell.png");}
+.peasant{background-image: url("img/peasant.png");}
+.spearman{background-image: url("img/spearman.png");}
+.horseman{background-image: url("img/horseman.png");}
+.warrior{background-image: url("img/warrior.png");}
+.king{background-image: url("img/king.png");}
 .flag{
    background-image: url("img/flag.png");
    background-size: 90%;

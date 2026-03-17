@@ -586,6 +586,95 @@
             "Text": "Выбрать",
             "OnClick": "buyItem('spearman')"
         },
+    "buyHorseman":{
+        "Parent": "shopWindowCont",
+        "Class": "buyItem buyItemDisable"
+    },
+        "buyHorsemanCost":{
+            "Parent": "buyHorseman",
+            "Class": "buyItemCost"
+        },
+            "buyHorsemanCostCont":{
+                "Parent": "buyHorsemanCost",
+                "Class": "buyItemCostCont"
+            },
+                "buyHorsemanEnergyIMG":{
+                    "Parent": "buyHorsemanCostCont",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"energy"
+                },
+                "buyHorsemanEnergyText":{
+                    "Parent": "buyHorsemanCostCont",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "4"
+                },
+            "buyHorsemanCostCont2":{
+                "Parent": "buyHorsemanCost",
+                "Class": "buyItemCostCont"
+            },
+                "buyHorsemanEnergyIMG2":{
+                    "Parent": "buyHorsemanCostCont2",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"coin"
+                },
+                "buyHorsemanEnergyText2":{
+                    "Parent": "buyHorsemanCostCont2",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "100"
+                },
+        "buyHorsemanIMG":{
+            "Parent": "buyHorseman",
+            "Class": "buyItemIMG",
+            "Tag":"img",
+            "Src":"horseman"
+        },
+        "buyHorsemanProfit":{
+            "Parent": "buyHorseman",
+            "Class": "buyItemProfit"
+        },
+            "buyHorsemanProfitCont":{
+                "Parent": "buyHorsemanProfit",
+                "Class": "buyItemCostCont"
+            },
+                "buyHorsemanProfitWoodText":{
+                    "Parent": "buyHorsemanProfitCont",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "День -8"
+                },
+                "buyHorsemanProfitWoodIMG":{
+                    "Parent": "buyHorsemanProfitCont",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"coin"
+                },
+            "buyHorsemanProfitCont2":{
+                "Parent": "buyHorsemanProfit",
+                "Class": "buyItemCostCont"
+            },
+                "buyHorsemanProfitWoodText2":{
+                    "Parent": "buyHorsemanProfitCont2",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "-3"
+                },
+                "buyHorsemanProfitWoodIMG2":{
+                    "Parent": "buyHorsemanProfitCont2",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"food"
+                },
+        "buyHorsemanBtn":{
+            "Parent": "buyHorseman",
+            "Class": "buyItemBtn",
+            "Tag":"button",
+            "Text": "Выбрать",
+            "OnClick": "buyItem('horseman')"
+        },
     "buyWarrior":{
         "Parent": "shopWindowCont",
         "Class": "buyItem buyItemDisable"
@@ -608,7 +697,7 @@
                     "Parent": "buyWarriorCostCont",
                     "Class": "buyItemCostText",
                     "Tag":"span",
-                    "Text": "3"
+                    "Text": "6"
                 },
             "buyWarriorCostCont2":{
                 "Parent": "buyWarriorCost",
@@ -624,7 +713,7 @@
                     "Parent": "buyWarriorCostCont2",
                     "Class": "buyItemCostText",
                     "Tag":"span",
-                    "Text": "100"
+                    "Text": "200"
                 },
         "buyWarriorIMG":{
             "Parent": "buyWarrior",
@@ -644,7 +733,7 @@
                     "Parent": "buyWarriorProfitCont",
                     "Class": "buyItemCostText",
                     "Tag":"span",
-                    "Text": "День -10"
+                    "Text": "День -12"
                 },
                 "buyWarriorProfitWoodIMG":{
                     "Parent": "buyWarriorProfitCont",
