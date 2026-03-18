@@ -403,6 +403,7 @@ body {
 .horseman{background-image: url("img/horseman.png");}
 .warrior{background-image: url("img/warrior.png");}
 .king{background-image: url("img/king.png");}
+.cross{background-image: url("img/cross.png");}
 .flag{
    background-image: url("img/flag.png");
    background-size: 90%;
