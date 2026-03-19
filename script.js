@@ -17,12 +17,16 @@ const actions = {
         changeCurrencies({Coin: -5, Energy: -1, Fly: hex});
     },
     harvest: (hex) => {
-        changeCurrencies({Energy: -1, Food: 2, Fly: hex});
+        changeCurrencies({Energy: -1, Food: 3, Fly: hex});
         classItem(hex, "void");
     },
     mushrooms: (hex) => {
-        changeCurrencies({Energy: -1, Food: 3, Fly: hex});
+        changeCurrencies({Energy: -1, Food: 2, Fly: hex});
         classItem(hex, "tree");
+    },
+    fishing: (hex) => {
+        const food = Math.ceil(Math.random()*5);
+        changeCurrencies({Energy: -2, Food: food, Fly: hex});
     },
     rebuildHouse: (hex) => {
         changeCurrencies({Coin: -10, Energy: -2, EnMax: 3, Fly: hex});
@@ -39,6 +43,16 @@ const actions = {
             const bool = searchNeigborCell(cell, "land", "player");
             if(bool && cell.land === "grass" && (cell.item == "void" || cell.item == "wheat" || cell.item == "treeChild")){
                 addAvailableCell(cell, "peasant");
+            }
+        });
+    },
+    woodman: (hex) => {
+        availableCells = [];
+        const cells2 = getCellsInRadius(hex, 2);
+        cells2.forEach(cell => {
+            const bool = searchNeigborCell(cell, "land", "player");
+            if(bool && cell.land === "grass" && (cell.item == "void" || cell.item == "wheat" || cell.item == "treeChild" || cell.item == "tree")){
+                addAvailableCell(cell, "woodman");
             }
         });
     },
@@ -86,6 +100,7 @@ const shopItem = {
     House:{energy: 3, coin: 30, wood: 10},
     WaterWell:{energy: 2, coin: 15, wood: 5},
     Peasant:{energy: 1, coin: 10},
+    Woodman:{energy: 1, coin: 10},
     Spearman:{energy: 2, coin: 40},
     Horseman:{energy: 4, coin: 100},
     Warrior:{energy: 6, coin: 200}
@@ -96,11 +111,12 @@ let availableCells = [];
 let currentSeed = Math.floor(Math.random() * 1000000);
 let useSeed = false;
 let itemCounter = 0;
-let money = 100;
+let enemyMoney = 10;
+let money = 10;
 let wood = 0;
 let food = 3;
-let energy = 6;
-let energyMax = 3;
+let energy = 4;
+let energyMax = 4;
 let warriorStep;
 let hexForBuy;
 
@@ -808,7 +824,7 @@ function nextStep(){
     enemyCells = [];
     energyPlus(3);
     function death(hex){
-        if(hex.item === "warrior" || hex.item == "peasant" || hex.item == "spearman" || hex.item == "horseman"){
+        if(hex.item === "warrior" || hex.item == "peasant" || hex.item == "woodman" || hex.item == "spearman" || hex.item == "horseman"){
             classItem(hex, "cross");
         }
     }
@@ -840,6 +856,13 @@ function nextStep(){
                 death(hex);
             }else{
                 changeCurrencies({Coin: -2, Food: -1});
+                hex.warriorStep = 1;
+            }
+        }else if(hex.item == "woodman"){
+            if((food - 1) < 0){
+                death(hex);
+            }else{
+                changeCurrencies({Coin: -4, Food: -1});
                 hex.warriorStep = 1;
             }
         }else if(hex.item == "cross"){
@@ -892,8 +915,10 @@ function nextStep(){
                 changeCurrencies({Coin: 1, Fly: hex});
             }
             playerCells.push(hex);
-            // availableCells = [...availableCells, ...neighboringСells(hex)];
         }else if(hex.land == "enemy"){
+            if(hex.item == "void"){
+                enemyMoney += 1;
+            }
             enemyCells.push(hex)
         }
         if(hex.flag == "new"){classFlag(hex, "old")} 
@@ -947,7 +972,7 @@ function newTreeChild(hex, chance){
         })
 }
 function classItem(hex, item){
-        hex.id.classList.remove("tree", "treeChild", "treeMushrooms", "wheat", "wheatSeed", "house", "houseOld", "waterWell", "void", "warrior", "peasant", "spearman", "horseman", "king", "cross");
+        hex.id.classList.remove("tree", "treeChild", "treeMushrooms", "wheat", "wheatSeed", "house", "houseOld", "waterWell", "void", "warrior", "peasant", "woodman", "spearman", "horseman", "king", "cross");
         hex.id.classList.add(item);
         hex.item = item;
 }
@@ -1056,6 +1081,9 @@ function showHexMenu(hex, event) {
         if (hex.item == "peasant" && hex.warriorStep > 0){
             items.push({ text: "Ход", action: () => actions["peasant"](hex)});
         }
+        if (hex.item == "woodman" && hex.warriorStep > 0){
+            items.push({ text: "Ход", action: () => actions["woodman"](hex)});
+        }
         if (hex.item == "spearman" && hex.warriorStep > 0){
             items.push({ text: "Ход", action: () => actions["spearman"](hex)});
         }
@@ -1064,6 +1092,11 @@ function showHexMenu(hex, event) {
         }
         if (hex.item == "warrior" && hex.warriorStep > 0){
             items.push({ text: "Ход", action: () => actions["warrior"](hex)});
+        }
+    } else if(hex.land == "water"){
+        const bool = searchNeigborCell(hex, "land", "player")
+        if(bool){
+            items.push({ text: "Рыбалка -2 энергии (+1-5 еды)", action: () => actions["fishing"](hex)});
         }
     }
     
@@ -1139,7 +1172,13 @@ function hexAction(row, col, event) {
                 if(hex.item === "wheat"){
                     actions["harvest"](hex);
                 }
+                myLog("pea")
                 classItem(hex, "peasant");
+            } else if (hex.availableType === "woodman"){
+                if(hex.item === "wheat"){
+                    actions["tree"](hex);
+                }
+                classItem(hex, "woodman");
             } else if (hex.availableType === "spearman"){
                 if(hex.item == "void" || hex.item == "wheat" || hex.item == "treeChild"){
                     classItem(hex, "spearman");
@@ -1184,6 +1223,11 @@ function buyItem(item){
     if(item == "peasant" && hexForBuy.land == "player"){
         changeCurrencies({Coin: -10, Energy: -1, Fly: hexForBuy});
         classItem(hexForBuy, "peasant");
+        hexForBuy.warriorStep = 1;
+    }
+    if(item == "woodman" && hexForBuy.land == "player"){
+        changeCurrencies({Coin: -10, Energy: -1, Fly: hexForBuy});
+        classItem(hexForBuy, "woodman");
         hexForBuy.warriorStep = 1;
     }
     if(item == "spearman" && hexForBuy.land == "player"){

@@ -497,6 +497,95 @@
             "Text": "Выбрать",
             "OnClick": "buyItem('peasant')"
         },
+    "buyWoodman":{
+        "Parent": "shopWindowCont",
+        "Class": "buyItem buyItemDisable"
+    },
+        "buyWoodmanCost":{
+            "Parent": "buyWoodman",
+            "Class": "buyItemCost"
+        },
+            "buyWoodmanCostCont":{
+                "Parent": "buyWoodmanCost",
+                "Class": "buyItemCostCont"
+            },
+                "buyWoodmanEnergyIMG":{
+                    "Parent": "buyWoodmanCostCont",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"energy"
+                },
+                "buyWoodmanEnergyText":{
+                    "Parent": "buyWoodmanCostCont",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "1"
+                },
+            "buyWoodmanCostCont2":{
+                "Parent": "buyWoodmanCost",
+                "Class": "buyItemCostCont"
+            },
+                "buyWoodmanEnergyIMG2":{
+                    "Parent": "buyWoodmanCostCont2",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"coin"
+                },
+                "buyWoodmanEnergyText2":{
+                    "Parent": "buyWoodmanCostCont2",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "10"
+                },
+        "buyWoodmanIMG":{
+            "Parent": "buyWoodman",
+            "Class": "buyItemIMG",
+            "Tag":"img",
+            "Src":"woodman"
+        },
+        "buyWoodmanProfit":{
+            "Parent": "buyWoodman",
+            "Class": "buyItemProfit"
+        },
+            "buyWoodmanProfitCont":{
+                "Parent": "buyWoodmanProfit",
+                "Class": "buyItemCostCont"
+            },
+                "buyWoodmanProfitWoodText":{
+                    "Parent": "buyWoodmanProfitCont",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "День -2"
+                },
+                "buyWoodmanProfitWoodIMG":{
+                    "Parent": "buyWoodmanProfitCont",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"coin"
+                },
+            "buyWoodmanProfitCont2":{
+                "Parent": "buyWoodmanProfit",
+                "Class": "buyItemCostCont"
+            },
+                "buyWoodmanProfitWoodText2":{
+                    "Parent": "buyWoodmanProfitCont2",
+                    "Class": "buyItemCostText",
+                    "Tag":"span",
+                    "Text": "-1"
+                },
+                "buyWoodmanProfitWoodIMG2":{
+                    "Parent": "buyWoodmanProfitCont2",
+                    "Class": "buyItemCostIMG",
+                    "Tag":"img",
+                    "Src":"food"
+                },
+        "buyWoodmanBtn":{
+            "Parent": "buyWoodman",
+            "Class": "buyItemBtn",
+            "Tag":"button",
+            "Text": "Выбрать",
+            "OnClick": "buyItem('woodman')"
+        },
     "buySpearman":{
         "Parent": "shopWindowCont",
         "Class": "buyItem buyItemDisable"
