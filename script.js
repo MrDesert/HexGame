@@ -830,7 +830,7 @@ function nextStep(){
     availableCells = [];
     playerCells = [];
     enemyCells = [];
-    energyPlus(3);
+    energyPlus(4);
     function death(hex){
         if(hex.item === "warrior" || hex.item == "peasant" || hex.item == "woodman" || hex.item == "spearman" || hex.item == "horseman"){
             classItem(hex, "cross");
@@ -844,6 +844,7 @@ function nextStep(){
             }else{
                 changeCurrencies({Coin: -10, Food: -3});
                 hex.warriorStep = 1;
+                hex.id.classList.add("jump");
             }
         }else if(hex.item == "spearman" && hex.land == "player"){
             if((food - 2) < 0){
@@ -851,6 +852,7 @@ function nextStep(){
             }else{
                 changeCurrencies({Coin: -5, Food: -2});
                 hex.warriorStep = 1;
+                hex.id.classList.add("jump");
             }
         }else if(hex.item == "horseman" && hex.land == "player"){
             if((food - 3) < 0){
@@ -858,6 +860,7 @@ function nextStep(){
             }else{
                 changeCurrencies({Coin: -8, Food: -3});
                 hex.warriorStep = 1;
+                hex.id.classList.add("jump");
             }
         }else if(hex.item == "peasant" && hex.land == "player"){
             if((food - 1) < 0){
@@ -865,6 +868,7 @@ function nextStep(){
             }else{
                 changeCurrencies({Coin: -2, Food: -1});
                 hex.warriorStep = 1;
+                hex.id.classList.add("jump");
             }
         }else if(hex.item == "woodman" && hex.land == "player"){
             if((food - 1) < 0){
@@ -872,6 +876,7 @@ function nextStep(){
             }else{
                 changeCurrencies({Coin: -4, Food: -1});
                 hex.warriorStep = 1;
+                hex.id.classList.add("jump");
             }
         }else if(hex.item == "cross"){
             const random = Math.floor(Math.random()*6)
@@ -922,6 +927,7 @@ function nextStep(){
             if(hex.item == "void"){
                 changeCurrencies({Coin: 1, Fly: hex});
             } else if(hex.item == "king"){
+                hex.id.classList.add("jump");
                 changeCurrencies({Coin: 3, Fly: hex});
             }
             playerCells.push(hex);
@@ -1192,6 +1198,7 @@ function hexAction(row, col, event) {
     if(hex.available){
         if(hex.available === "flag"){
             raisingFlaf(hex, -3, "player");
+            hex.id.classList.remove("jump");
         }else{
             if(hex.availableType === "warrior"){
                 classItem(hex, "warrior");
@@ -1224,6 +1231,7 @@ function hexAction(row, col, event) {
             cell.id.classList.remove("availableCell");
             cell.available = null;
         })
+        hex.id.classList.remove("jump");
     } else {
     showHexMenu(hex, event);
 }
@@ -1233,6 +1241,7 @@ function buyItem(item){
     shop(false);
     if(item == "house" && hexForBuy.land == "player"){
         changeCurrencies({Coin: -30, Wood: -10, Energy: -3, EnMax: 3, Fly: hexForBuy})
+        classFlag(hexForBuy, "none");
         classItem(hexForBuy, "house")
     }
     if(item == "tree" && hexForBuy.land == "player"){
@@ -1250,26 +1259,31 @@ function buyItem(item){
     if(item == "peasant" && hexForBuy.land == "player"){
         changeCurrencies({Coin: -10, Energy: -1, Fly: hexForBuy});
         classItem(hexForBuy, "peasant");
+        classFlag(hexForBuy, "none");
         hexForBuy.warriorStep = 1;
     }
     if(item == "woodman" && hexForBuy.land == "player"){
         changeCurrencies({Coin: -10, Energy: -1, Fly: hexForBuy});
         classItem(hexForBuy, "woodman");
+        classFlag(hexForBuy, "none");
         hexForBuy.warriorStep = 1;
     }
     if(item == "spearman" && hexForBuy.land == "player"){
         changeCurrencies({Coin: -40, Energy: -2, Fly: hexForBuy});
         classItem(hexForBuy, "spearman");
+        classFlag(hexForBuy, "none");
         hexForBuy.warriorStep = 1;
     }
     if(item === "horseman" && hexForBuy.land == "player"){
         changeCurrencies({Coin: -100, Energy: -4, Fly: hexForBuy});
         classItem(hexForBuy, "horseman");
+        classFlag(hexForBuy, "none");
         hexForBuy.warriorStep = 1;
     }
     if(item == "warrior" && hexForBuy.land == "player"){
         changeCurrencies({Coin: -200, Energy: -6, Fly: hexForBuy});
         classItem(hexForBuy, "warrior");
+        classFlag(hexForBuy, "none");
         hexForBuy.warriorStep = 1;
     }
 } 

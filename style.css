@@ -511,3 +511,14 @@ body {
    75% {opacity: 50%; transform: translateY(-50px);}
    100% {opacity: 0%; transform: translateY(-60px);}
 }
+.jump{
+   animation: jump 1.3s infinite;
+      /* Оптимизация для GPU */
+   will-change: transform;
+   backface-visibility: hidden;
+   transform: translateZ(0);
+}
+@keyframes jump {
+   0%, 100% {background-position: center 5px;}
+   50% {background-position: center -3px;}
+}
