@@ -8,16 +8,24 @@ let menuElement = null;
 const hexs = [];
 const mapHexs = [];
 const actions = {
-    wood: (hex) => {
-        changeCurrencies({Wood: 5, Energy: -2, Fly: hex});
+    wood: (hex, free = false) => {
+        if(!free){
+            changeCurrencies({Wood: 5, Energy: -2, Fly: hex});
+        } else{
+            changeCurrencies({Wood: 5, Fly: hex});
+        }
         classItem(hex, "void");
     },
     waterTree: (hex) => {
         treeGrowth(hex, 3);
         changeCurrencies({Coin: -5, Energy: -1, Fly: hex});
     },
-    harvest: (hex) => {
-        changeCurrencies({Energy: -1, Food: 3, Fly: hex});
+    harvest: (hex, free = false) => {
+        if(!free){
+            changeCurrencies({Energy: -1, Food: 3, Fly: hex});
+        } else{
+            changeCurrencies({Food: 3, Fly: hex});
+        }
         classItem(hex, "void");
     },
     mushrooms: (hex) => {
@@ -42,7 +50,7 @@ const actions = {
         cells2.forEach(cell => {
             const bool = searchNeigborCell(cell, "land", "player");
             if(bool && cell.land === "grass" && (cell.item == "void" || cell.item == "wheat" || cell.item == "treeChild")){
-                addAvailableCell(cell, "peasant");
+                addAvailableCell(cell, "peasant", hex);
             }
         });
     },
@@ -52,7 +60,7 @@ const actions = {
         cells2.forEach(cell => {
             const bool = searchNeigborCell(cell, "land", "player");
             if(bool && cell.land === "grass" && (cell.item == "void" || cell.item == "wheat" || cell.item == "treeChild" || cell.item == "tree")){
-                addAvailableCell(cell, "woodman");
+                addAvailableCell(cell, "woodman", hex);
             }
         });
     },
@@ -62,7 +70,7 @@ const actions = {
         cells2.forEach(cell => {
             const bool = searchNeigborCell(cell, "land", "player");
             if(bool && cell.land != "water" && (cell.item == "void" || cell.item == "wheat" || cell.item == "treeChild")){
-                addAvailableCell(cell, "spearman");
+                addAvailableCell(cell, "spearman", hex);
             }
         });
     },
@@ -72,7 +80,7 @@ const actions = {
         cells2.forEach(cell => {
             const bool = searchNeigborCell(cell, "land", "player");
             if(bool && cell.land != "water" && (cell.item == "void" || cell.item == "wheat" || cell.item == "treeChild")){
-                addAvailableCell(cell, "horseman");
+                addAvailableCell(cell, "horseman", hex);
             }
         });
     },
@@ -82,7 +90,7 @@ const actions = {
         cells2.forEach(cell => {
             const bool = searchNeigborCell(cell, "land", "player");
             if(bool && cell.land != "water" && (cell.item == "void" || cell.item == "wheat" || cell.item == "treeChild")){
-                addAvailableCell(cell, "warrior");
+                addAvailableCell(cell, "warrior", hex);
             }
         });
     },
@@ -830,35 +838,35 @@ function nextStep(){
     }
     hexs.forEach(hex => {
             console.log(money)
-        if(hex.item == "warrior"){
+        if(hex.item == "warrior" && hex.land == "player"){
             if((food - 3) < 0){
                 death(hex);
             }else{
                 changeCurrencies({Coin: -10, Food: -3});
                 hex.warriorStep = 1;
             }
-        }else if(hex.item == "spearman"){
+        }else if(hex.item == "spearman" && hex.land == "player"){
             if((food - 2) < 0){
                 death(hex);
             }else{
                 changeCurrencies({Coin: -5, Food: -2});
                 hex.warriorStep = 1;
             }
-        }else if(hex.item == "horseman"){
+        }else if(hex.item == "horseman" && hex.land == "player"){
             if((food - 3) < 0){
                 death(hex);
             }else{
                 changeCurrencies({Coin: -8, Food: -3});
                 hex.warriorStep = 1;
             }
-        }else if(hex.item == "peasant"){
+        }else if(hex.item == "peasant" && hex.land == "player"){
             if((food - 1) < 0){
                 death(hex);
             }else{
                 changeCurrencies({Coin: -2, Food: -1});
                 hex.warriorStep = 1;
             }
-        }else if(hex.item == "woodman"){
+        }else if(hex.item == "woodman" && hex.land == "player"){
             if((food - 1) < 0){
                 death(hex);
             }else{
@@ -913,11 +921,15 @@ function nextStep(){
         if(hex.land == "player"){
             if(hex.item == "void"){
                 changeCurrencies({Coin: 1, Fly: hex});
+            } else if(hex.item == "king"){
+                changeCurrencies({Coin: 3, Fly: hex});
             }
             playerCells.push(hex);
         }else if(hex.land == "enemy"){
             if(hex.item == "void"){
                 enemyMoney += 1;
+            } else if(hex.item == "king"){
+                enemyMoney += 3;
             }
             enemyCells.push(hex)
         }
@@ -926,6 +938,21 @@ function nextStep(){
         hex.id.classList.remove("availableCell");
     })
     if(enemyCells.length > 0){
+        let enemyBuy;
+        const enemyVoid = [];
+        if(enemyMoney > 10 && Math.floor(Math.random()*10) == 0){
+            enemyCells.forEach(cell => {
+                if(cell.item == "void"){
+                    enemyVoid.push(cell);
+                }
+            })
+            if(enemyVoid.length > 0){
+                enemyBuy = enemyVoid[Math.floor(Math.random()*enemyVoid.length)];
+                classItem(enemyBuy, "peasant")
+                enemyMoney -= 10;
+            }
+        }
+    if(!enemyBuy){    
     let cells;
     let next = false; 
     do {
@@ -939,6 +966,7 @@ function nextStep(){
     } while (stepEnemy && stepEnemy.land == "enemy" || !stepEnemy || stepEnemy.land == "water");
     enemyLand(stepEnemy);
     raisingFlaf(stepEnemy, 0, "enemy");
+    }
     }
     if(playerCells.length < 1){windowGameEnd("Поражение!", "red")}
     else if(enemyCells.length < 1){windowGameEnd("Победа!", "green")}
@@ -1062,15 +1090,15 @@ function showHexMenu(hex, event) {
         if (hex.item == "wheatSeed" && energy >= 1 && money >= 2) {
             items.push({ text: "🌱 Полить (2 монет, 1 энергии)", action: () => actions["waterWheat"](hex)});
         }
-        if (hex.item == "void" && energy >= 1) {
+        if ((hex.item == "void" || hex.item == "treeChild" || hex.item == "wheat") && energy >= 1) {
             items.push({ text: "Установить...", action: () => shop(true, hex) });
             hexForBuy = hex;
         }
         if (hex.item == "wheat" && energy >= 1) {
-            items.push({ text: "🌾 Собрать (+2 еда)", action: () => actions["harvest"](hex)});
+            items.push({ text: "🌾 Собрать (+3 еда)", action: () => actions["harvest"](hex)});
         }
         if (hex.item == "treeMushrooms" && energy >= 1) {
-            items.push({ text: "🌾 Собрать (+3 еда)", action: () => actions["mushrooms"](hex)});
+            items.push({ text: "🌾 Собрать (+2 еда)", action: () => actions["mushrooms"](hex)});
         }
         if (hex.item == "houseOld" && energy >= 2 && money >= 10){
             items.push({ text: "Восстановить (-10 монет, 2 энергии)", action: () => actions["rebuildHouse"](hex)});
@@ -1162,7 +1190,6 @@ function showHexMenu(hex, event) {
 function hexAction(row, col, event) {
     const hex = hexs[mapHexs[row][col]];
     if(hex.available){
-        myLog("flag")
         if(hex.available === "flag"){
             raisingFlaf(hex, -3, "player");
         }else{
@@ -1170,13 +1197,12 @@ function hexAction(row, col, event) {
                 classItem(hex, "warrior");
             } else if (hex.availableType === "peasant"){
                 if(hex.item === "wheat"){
-                    actions["harvest"](hex);
+                    actions["harvest"](hex, true);
                 }
-                myLog("pea")
                 classItem(hex, "peasant");
             } else if (hex.availableType === "woodman"){
                 if(hex.item === "wheat"){
-                    actions["tree"](hex);
+                    actions["tree"](hex, true);
                 }
                 classItem(hex, "woodman");
             } else if (hex.availableType === "spearman"){
@@ -1185,11 +1211,12 @@ function hexAction(row, col, event) {
                 }else if (hex.item == "king"){
                     flyAction(hex, 100, "coin", "green");
                 }
-            }
-            else if (hex.availableType === "horseman"){
+            } else if (hex.availableType === "horseman"){
                 classItem(hex, "horseman");
             }
             playerLand(hex);
+            myLog(hex.row + ":" + hex.col)
+            myLog(hex.available.row + ":" + hex.available.col)
             classItem(hex.available, "void")
             hex.available.warriorStep -= 1;
         }
@@ -1288,8 +1315,8 @@ function classFlag(hex, flag){
         hex.id.classList.remove("flag", "flag_Item", "flagOld");
     }
 }
-function addAvailableCell(hex, type){
-    hex.available = hex;
+function addAvailableCell(hex, type, hexMan){
+    hex.available = hexMan;
     hex.availableType = type;
     availableCells.push(hex);
     hex.id.classList.add("availableCell");
